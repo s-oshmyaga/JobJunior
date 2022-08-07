@@ -30,7 +30,7 @@ handler500 = custom_handler500
 urlpatterns = [
     path('', MainView, name='main'),
     path('vacancies', VacanciesView, name='vacancies'),
-    path('vacancies/cat/frontend', SpecialtyView, name='specializatons'),
-    path('companies/345', CompanyCardView, name='companycard'),
-    path('vacancies/22', OneVacancyView, name='onevacancy'),
+    path('vacancies/cat/<int:specialty_id>', SpecialtyView, name='specialty'),
+    path('companies/<int:company_id>', CompanyCardView, name='companycard'),
+    path('vacancies/<int:vacancy_id>', OneVacancyView, name='onevacancy'),
 ]

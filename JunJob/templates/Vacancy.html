@@ -10,7 +10,7 @@
       </div>
       <div class="col-12 col-lg-8">
         <section class="pl-3">
-          <a href="#"><img src="https://place-hold.it/130x80" width="130" height="80" alt=""></a>
+          <a href="{% url 'companycard' vacancy.company.id %}"><img src="{{ vacancy.company.logo }}" width="130" height="80" alt=""></a>
           <div class="d-flex align-items-baseline align-content-baseline">
             <h1 class="h2 mt-4 font-weight-bold" >{{ vacancy.title }}</h1>
             {% load humanize %}

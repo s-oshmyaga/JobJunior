@@ -3,6 +3,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class Company(models.Model):
     name = models.CharField(max_length=45)
     location = models.CharField(max_length=30)
@@ -10,10 +11,12 @@ class Company(models.Model):
     description = models.TextField()
     employee_count = models.IntegerField()
 
+
 class Specialty(models.Model):
     code = models.CharField(max_length=10)
     title = models.CharField(max_length=40)
     picture = models.URLField(default='https://place-hold.it/100x60')
+
 
 class Vacancy(models.Model):
     title = models.CharField(max_length=60)
@@ -24,7 +27,3 @@ class Vacancy(models.Model):
     salary_min = models.FloatField()
     salary_max = models.FloatField()
     published_at = models.DateField()
-
-
-
-

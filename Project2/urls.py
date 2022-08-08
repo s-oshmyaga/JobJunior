@@ -15,11 +15,11 @@ Including another URLconf
 """
 from django.urls import path
 
-from JunJob.views import CompanyCardView
-from JunJob.views import MainView
-from JunJob.views import OneVacancyView
-from JunJob.views import SpecialtyView
-from JunJob.views import VacanciesView
+from JunJob.views import company_card_view
+from JunJob.views import main_view
+from JunJob.views import one_vacancy_view
+from JunJob.views import specialty_view
+from JunJob.views import vacancies_view
 
 from JunJob.views import custom_handler404
 from JunJob.views import custom_handler500
@@ -28,9 +28,9 @@ handler404 = custom_handler404
 handler500 = custom_handler500
 
 urlpatterns = [
-    path('', MainView, name='main'),
-    path('vacancies', VacanciesView, name='vacancies'),
-    path('vacancies/cat/<int:specialty_id>', SpecialtyView, name='specialty'),
-    path('companies/<int:company_id>', CompanyCardView, name='companycard'),
-    path('vacancies/<int:vacancy_id>', OneVacancyView, name='onevacancy'),
+    path('', main_view, name='main'),
+    path('vacancies', vacancies_view, name='vacancies'),
+    path('vacancies/cat/<int:specialty_id>', specialty_view, name='specialty'),
+    path('companies/<int:company_id>', company_card_view, name='companycard'),
+    path('vacancies/<int:vacancy_id>', one_vacancy_view, name='onevacancy'),
 ]

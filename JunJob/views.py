@@ -1,12 +1,12 @@
-from django.shortcuts import render
 from django.http import HttpResponseNotFound, HttpResponseServerError
+from django.shortcuts import render
 
 from JunJob import models
 
 # Create your views here.
 
 
-def MainView(request):
+def main_view(request):
     specialty_list = models.Specialty.objects.all()
     company_list = models.Company.objects.all()
     context = {
@@ -16,7 +16,7 @@ def MainView(request):
     return render(request, 'main.html', context=context)
 
 
-def VacanciesView(request):
+def vacancies_view(request):
     vacancies_list = models.Vacancy.objects.all()
     context = {
         'vacancies_list': vacancies_list,
@@ -24,7 +24,7 @@ def VacanciesView(request):
     return render(request, 'Vacancies.html', context=context)
 
 
-def SpecialtyView(request, specialty_id):
+def specialty_view(request, specialty_id):
     specialty = models.Specialty.objects.get(id=specialty_id)
     specialty_vacancies = models.Vacancy.objects.filter(specialty=specialty)
     context = {
@@ -34,13 +34,22 @@ def SpecialtyView(request, specialty_id):
     return render(request, 'Specialty.html', context=context)
 
 
-def CompanyCardView(request, company_id):
+def company_card_view(request, company_id):
+    company = models.Company.objects.get(id=company_id)
+    company_vacancies_list = models.Vacancy.objects.filter(company=company)
+    context = {
+        'company': company,
+        'company_vacancies_list': company_vacancies_list,
+    }
+    return render(request, 'CompanyCard.html', context=context)
 
-    return render(request, 'CompanyCard.html')
 
-
-def OneVacancyView(request, vacancy_id):
-    return render(request, 'Vacancy.html')
+def one_vacancy_view(request, vacancy_id):
+    vacancy = models.Vacancy.objects.get(id=vacancy_id)
+    context = {
+        'vacancy': vacancy,
+    }
+    return render(request, 'Vacancy.html', context=context)
 
 
 def custom_handler404(request, exceprion):

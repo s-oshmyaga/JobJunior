@@ -35,7 +35,7 @@
             <img class="mx-auto d-block" src="{{ specialty.picture }}" width="80" height="80" alt="">
             <div class="card-body">
               <p class="card-text mb-2">{{ specialty.title }}</p>
-              <p class="card-text"><a href="#">{{ specialty.vacancies.count }} вакансий</a></p>
+              <p class="card-text"><a href="{% url 'specialty' specialty.id %}">{{ specialty.vacancies.count }} вакансий</a></p>
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@
               <img class="mx-auto d-block mw-100" src="{{ company.logo }}" alt="" width="150">
             </a>
             <div class="card-body">
-              <p class="card-text"><a href="#">{{ company.vacancies.count }} вакансий</a></p>
+              <p class="card-text"><a href="{% url 'companycard' company.id %}">{{ company.vacancies.count }} вакансий</a></p>
             </div>
           </div>
         </div>

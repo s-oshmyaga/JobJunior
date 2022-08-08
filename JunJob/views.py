@@ -35,12 +35,21 @@ def SpecialtyView(request, specialty_id):
 
 
 def CompanyCardView(request, company_id):
-
-    return render(request, 'CompanyCard.html')
+    company = models.Company.objects.get(id=company_id)
+    company_vacancies_list = models.Vacancy.objects.filter(company=company)
+    context = {
+        'company': company,
+        'company_vacancies_list': company_vacancies_list,
+    }
+    return render(request, 'CompanyCard.html', context=context)
 
 
 def OneVacancyView(request, vacancy_id):
-    return render(request, 'Vacancy.html')
+    vacancy = models.Vacancy.objects.get(id=vacancy_id)
+    context = {
+        'vacancy': vacancy,
+    }
+    return render(request, 'Vacancy.html', context=context)
 
 
 def custom_handler404(request, exceprion):

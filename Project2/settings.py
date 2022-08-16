@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_=3h-6n&y)k-929p9bybg=31@-0ev(38ik%e84aq5t1m107%^5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    # myapp
     'JunJob',
+    # for number
+    "phonenumber_field",
 ]
 
 MIDDLEWARE = [
@@ -100,6 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+LOGIN_REDIRECT_URL = '/'
 
 
 # Internationalization
@@ -118,6 +122,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = 'media'
+
+MEDIA_COMPANY_IMAGE_DIR = 'company_images'
+MEDIA_SPECIALITY_IMAGE_DIR = 'speciality_images'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

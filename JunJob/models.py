@@ -1,5 +1,9 @@
 from django.db import models
+from django.contrib.auth.models import User
 
+from phonenumber_field.modelfields import PhoneNumberField
+
+from django.conf import settings
 
 # Create your models here.
 
@@ -7,15 +11,17 @@ from django.db import models
 class Company(models.Model):
     name = models.CharField(max_length=45)
     location = models.CharField(max_length=30)
-    logo = models.URLField(default='https://place-hold.it/100x60')
+    logo = models.ImageField(upload_to=settings.MEDIA_COMPANY_IMAGE_DIR)
     description = models.TextField()
     employee_count = models.IntegerField()
+    default_owner = User.objects.get(id=2)
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company', null=True)
 
 
 class Specialty(models.Model):
     code = models.CharField(max_length=10)
     title = models.CharField(max_length=40)
-    picture = models.URLField(default='https://place-hold.it/100x60')
+    picture = models.ImageField(upload_to=settings.MEDIA_SPECIALITY_IMAGE_DIR)
 
 
 class Vacancy(models.Model):
@@ -27,3 +33,13 @@ class Vacancy(models.Model):
     salary_min = models.FloatField()
     salary_max = models.FloatField()
     published_at = models.DateField()
+
+
+class Application(models.Model):
+    written_username = models.CharField(max_length=70)
+    written_phone = PhoneNumberField(unique=True, null=False, blank=False)
+    written_cover_letter = models.TextField()
+    vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE,
+                             default=None, null=True)
+

@@ -33,8 +33,8 @@ from JunJob.views import my_company_vacancies_create_view
 from JunJob.views import my_company_vacancies_view
 from JunJob.views import send_an_application_view
 
-from JunJob.views import RegisterView
-from JunJob.views import UserLoginView
+from JunJob.views import Register
+from JunJob.views import LoginUser
 
 
 from JunJob.views import custom_handler404
@@ -52,6 +52,7 @@ urlpatterns = [
     path('companies/<int:company_id>', company_card_view, name='companycard'),  # Вакансии компании
     path('vacancies/<int:vacancy_id>', one_vacancy_view, name='onevacancy'),  # Одна вакансия
     path('vacancies/<int:vacancy_id>/send/', send_an_application_view, name='send_an_application'),   # Отправка заявки
+    # Все о компании
     path('mycompany/letsstart/', my_company_lets_start_view, name='lets_start'),  # Моя компания (предложение создать)
     path('mycompany/create/', my_company_create_view, name='create_a_company'),  # Моя компания (пустая форма)
     path('mycompany/', my_company_form_view, name='my_company_form'),  # Моя компания (заполненная форма)
@@ -59,10 +60,10 @@ urlpatterns = [
     path('mycompany/vacancies/create/', my_company_vacancies_create_view, name='create_a_vacancy'),   # Мои вакансии
     path('mycompany/vacancies/<int:vacancy_id>', my_company_one_vacancy_view, name='my_one_vacancy'),  # Одна моя
     # вакансия (заполненная форма)
-    path('login', UserLoginView.as_view()),
-    path('register', RegisterView.as_view()),
+    # аутентификация
+    path('login', LoginUser.as_view(), name='login'),
+    path('register', Register.as_view(), name='register'),
     path('logout', LogoutView.as_view()),
-    # path('accounts/', include('django.contrib.auth.urls')),
 
 ]
 

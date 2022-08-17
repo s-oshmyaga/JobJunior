@@ -1,12 +1,15 @@
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate
 from django.contrib.auth.views import LoginView
+from django.contrib import messages
 from django.http import HttpResponseNotFound, HttpResponseServerError
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import CreateView
 
 from JunJob import models
+from JunJob.accounts import forms
 
 # Create your views here.
+from JunJob.accounts.forms import RegisterUserForm, LoginUserForm
 
 
 def main_view(request):
@@ -84,15 +87,17 @@ def my_company_one_vacancy_view(request, vacancy_id):  # Одна моя вак�
 
 
 # authentication
-class UserLoginView(LoginView):
+
+class LoginUser(LoginView):
+    form_class = LoginUserForm
+    template_name = 'login.html'
     redirect_authenticated_user = True
-    template_name = 'Login.html'
 
 
-class RegisterView(CreateView):
-    form_class = UserCreationForm
-    success_url = 'login'
+class Register(CreateView):
     template_name = 'Register.html'
+    form_class = RegisterUserForm
+    success_url = 'login'
 
 
 # хэндлеры

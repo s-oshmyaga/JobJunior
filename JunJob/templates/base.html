@@ -23,9 +23,29 @@
 
         </ul>
         <ul class="navbar-nav col-2 justify-content-end">
+          {% if user.is_authenticated %}
           <li class="nav-item active">
-            <a href="#" class="nav-link font-weight-bold">Вход</a>
+            <div class="btn-group">
+              <button type="button" class="btn dropdown-toggle font-weight-bold" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                {% if request.user.first_name and request.user.last_name %}
+                {{ request.user.first_name }} {{ request.user.last_name }}
+                {% else %}
+                Имя Фамилия
+                {% endif %}
+              </button>
+              <div class="dropdown-menu dropdown-menu-right mt-3">
+                <a href="#" class="dropdown-item py-2">Профиль</a>
+                <a href="#" class="dropdown-item py-2">Резюме</a>
+                <a href="#" class="dropdown-item py-2">Компания</a>
+                <a href="/logout" class="dropdown-item py-2">Выйти</a>
+              </div>
+            </div>
           </li>
+          {% else %}
+          <li class="nav-item active">
+            <a href="{% url 'login' %}" class="nav-link font-weight-bold">Вход</a>
+          </li>
+          {% endif %}
         </ul>
       </div>
     </nav>

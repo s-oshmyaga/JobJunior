@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block container %}
+ <main class="container">
+    <div class="row">
+      <div class="col-8 col-lg-4 offset-2 offset-lg-4">
+        <form class="form-signin pt-5" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
+
+          <div class="text-center mt-5 b-1">
+            <h1 class="h3 mb-3 font-weight-normal">Джуманджи</h1>
+            <p class="h5 font-weight-light">Создайте аккаунт</p>
+          </div>
+            {% for f in form %}
+              <div class="mt-5 form-label-group">
+                <p class="text-muted">
+                    <label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}</label>
+                    {{ f }}
+                </p>
+                  <div class="form-error">{{ f.errors }}</div>
+              </div>
+            {% endfor %}
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Регистрация</button>
+        </form>
+         <div class="mt-4 text-center"><p>Есть аккаунт? <a href="/login">Войдите!</a></p></div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

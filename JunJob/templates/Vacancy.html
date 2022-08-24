@@ -10,7 +10,7 @@
       </div>
       <div class="col-12 col-lg-8">
         <section class="pl-3">
-          <a href="{% url 'companycard' vacancy.company.id %}"><img src="{{ vacancy.company.logo }}" width="130" height="80" alt=""></a>
+          <a href="{% url 'companycard' vacancy.company.id %}"><img src="{{ vacancy.company.logo.url }}" width="130" height="80" alt=""></a>
           <div class="d-flex align-items-baseline align-content-baseline">
             <h1 class="h2 mt-4 font-weight-bold" >{{ vacancy.title }}</h1>
             {% load humanize %}
@@ -21,24 +21,33 @@
           <div style="line-height: 1.8;">
             {{ vacancy.description|safe }}
           </div>
-          <form action="/echo" class="card mt-4 mb-3" enctype="multipart/form-data">
+
+          {% if request.user.is_authenticated %}
+          <form class="card mt-4 mb-3" enctype="multipart/form-data" method="POST">
+            {% csrf_token %}
             <div class="card-body mx-3">
               <p class="h5 mt-3 font-weight-normal">Отозваться на вакансию</p>
-              <div class="form-group">
-                <label class="mb-1 mt-2" for="userName">Вас зовут</label>
-                <input class="form-control" type="text" placeholder="" id="userName">
+              {% for message in messages %}
+              <div class="message {{ message.tags }}" style="color: red;" align="right">
+                {{ message }}
               </div>
+              {% endfor %}
+              {% for f in form %}
               <div class="form-group">
-                <label class="mb-1" for="userPhone">Ваш телефон</label>
-                <input class="form-control" type="tel" placeholder="" id="userPhone">
+                <label class="mb-1" for="{{ f.id_for_label }}">{{ f.label }}</label>
+                {{ f }}
               </div>
-              <div class="form-group">
-                <label class="mb-1" for="userMsg" >Сопроводительное письмо</label>
-                <textarea class="form-control" rows="8" id="userMsg"></textarea>
-              </div>
-              <input type="submit" class="btn btn-primary mt-4 mb-2" value="Записаться на пробный урок">
+              {% endfor %}
+              <div class="checkbox mb-3"></div>
+              <button class="btn btn-primary btn-lg btn-block" type="submit">Отозваться</button>
             </div>
           </form>
+          {% else %}
+          <div class="card-body mx-3" style="background-color: #e6e6e6">
+            <p class="h5 mt-3 font-weight-bold text-center">Вы не авторизованны, поэтому не можете оставить отклик</p>
+            <div class="mt-4 text-center"><a href="/register">Зарегистрируйтесь</a> или <a href="/login">войдите</a></div>
+          </div>
+          {% endif %}
         </section>
       </div>
     </div>

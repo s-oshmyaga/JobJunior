@@ -11,10 +11,9 @@ from django.conf import settings
 class Company(models.Model):
     name = models.CharField(max_length=45)
     location = models.CharField(max_length=30)
-    logo = models.ImageField(upload_to=settings.MEDIA_COMPANY_IMAGE_DIR)
+    logo = models.ImageField(upload_to=settings.MEDIA_COMPANY_IMAGE_DIR, max_length=40000)
     description = models.TextField()
     employee_count = models.IntegerField()
-    default_owner = User.objects.get(id=2)
     owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='company', null=True)
 
 
@@ -40,6 +39,5 @@ class Application(models.Model):
     written_phone = PhoneNumberField(unique=True, null=False, blank=False)
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
-    user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE,
-                             default=None, null=True)
+    user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE, null=True)
 

@@ -36,7 +36,11 @@
               <div class="dropdown-menu dropdown-menu-right mt-3">
                 <a href="#" class="dropdown-item py-2">Профиль</a>
                 <a href="#" class="dropdown-item py-2">Резюме</a>
-                <a href="#" class="dropdown-item py-2">Компания</a>
+                {% if request.user.company %}
+                <a href="{% url 'my_company_form' %}" class="dropdown-item py-2">Компания</a>
+                {% else %}
+                <a href="{% url 'create_a_company' %}" class="dropdown-item py-2">Компания</a>
+                {% endif %}
                 <a href="/logout" class="dropdown-item py-2">Выйти</a>
               </div>
             </div>

@@ -17,30 +17,39 @@
             <!-- Tab -->
             <section class="tab-pane fade show active">
               <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
-              <p class="alert alert-info" role="alert">
+                {% if messages %}
+                {% for message in messages %}
+                 <div class="message {{ message.tags }}" style="color: red;" align="right">
+                  {{ message }}
+                 </div>
+                {% endfor %}
+                {% endif %}
+              <!--  <p class="alert alert-info" role="alert">
                 Информация о компании обновлена
-              </p>
-              <form action="/echo" enctype="multipart/form-data">
+              </p>  -->
+
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2 text-dark" for="companyName">Название компании</label>
-                      <input class="form-control" type="text" value="Staffing Smarter" id="companyName">
+                      <label class="mb-2 text-dark">{{ form.name.label }}</label>
+                      {{ form.name }}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group">
-                      <label class="mb-2 text-dark" for="companyLogo">Логотип</label>
+                      <label class="mb-2 text-dark">{{ form.logo.label }}</label>
                       <div class="row align-items-center">
-                        <div class="col-6">
-                          <img src="https://place-hold.it/120x40" alt="" style="max-width: 120px;height: auto;">
-                        </div>
+<!--                        <div class="col-6">-->
+<!--                          <img src="{{ form.logo.initial }}" alt="" style="max-width: 120px;height: auto;">-->
+<!--                        </div>-->
                         <div class="col-6" style="position: relative;">
-                          <div class="input-group-prepend" style="position: absolute; top: 0;right: 15px;">
-                            <span class="btn btn-info px-4">Загрузить</span>
-                          </div>
+<!--                          <div class="input-group-prepend" style="position: absolute; top: 0;right: 15px;">-->
+<!--                            <span class="btn btn-info px-4">Загрузить</span>-->
+<!--                          </div>-->
                           <div class="custom-file" style="">
-                            <input type="file" class="custom-file-input" id="inputGroupFile01">
+                            {{ form.logo }}
                           </div>
                         </div>
                       </div>
@@ -50,25 +59,39 @@
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2 text-dark" for="companyTeam">Количество человек в компании</label>
-                      <input class="form-control" type="text" value="10-15" id="companyTeam">
+                      <label class="mb-2 text-dark" >
+                        {{ form.employee_count.label }}</label>
+                      {{ form.employee_count }}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2 text-dark" for="companyLocation">География</label>
-                      <input class="form-control" type="text" value="Рязань" id="companyLocation">
+                      <label class="mb-2 text-dark">{{ form.location.label }}</label>
+                      {{ form.location }}
                     </div>
                   </div>
                 </div>
                 <div class="form-group pb-2">
-                  <label class="mb-2 text-dark" for="companyInfo">Информация о&nbsp;компании</label>
-                  <textarea class="form-control" rows="4" id="companyInfo" style="color:#000;">Для тех, кто желает работать в&nbsp;комфортном офисе,&nbsp;&mdash; у&nbsp;нас их&nbsp;целых три. Исторически так сложилось, что руководство и&nbsp;менеджерский состав располагается в&nbsp;Москве (обусловлено близостью заказчиков), центр разработки&nbsp;&mdash; в&nbsp;Ульяновске, в&nbsp;т.&nbsp;ч. школа молодых разработчиков и&nbsp;QA-центр&nbsp;&mdash; в&nbsp;Казани.</textarea>
+                  <label class="mb-2 text-dark">{{ form.description.label }}</label>
+                  {{ form.description }}
                 </div>
                 <div class="form-group">
                   <input type="submit" class="btn btn-info" value="Сохранить">
                 </div>
               </form>
+
+<!--              <form method="POST" enctype="multipart/form-data">-->
+<!--                {% csrf_token %}-->
+<!--                <div class="row">-->
+<!--                  <div class="col-12 col-md-6">-->
+<!--                    <div class="form-group pb-2">-->
+<!--                      <label class="mb-2 text-dark" for="companyName">Название компании</label>-->
+<!--                      <input class="form-control" type="text" value="Staffing Smarter" id="companyName">-->
+<!--                    </div>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </form>-->
+
             </section>
             <!-- END Tab -->
           </div>

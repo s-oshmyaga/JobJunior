@@ -17,6 +17,12 @@
             <!-- Tab -->
             <section class="tab-pane fade show active">
               <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
+
+                {% if request.user.company %}  <!-- если у пользователя уже есть компания - разрешить редактировать -->
+                <a class="btn btn-default" href="{% url 'my_company_edit' %}">
+                    <span class="glyphicon glyphicon-pencil"></span></a>
+                {% endif %}
+
                 {% if messages %}
                 {% for message in messages %}
                  <div class="message {{ message.tags }}" style="color: red;" align="right">
@@ -24,9 +30,6 @@
                  </div>
                 {% endfor %}
                 {% endif %}
-              <!--  <p class="alert alert-info" role="alert">
-                Информация о компании обновлена
-              </p>  -->
 
               <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -79,19 +82,6 @@
                   <input type="submit" class="btn btn-info" value="Сохранить">
                 </div>
               </form>
-
-<!--              <form method="POST" enctype="multipart/form-data">-->
-<!--                {% csrf_token %}-->
-<!--                <div class="row">-->
-<!--                  <div class="col-12 col-md-6">-->
-<!--                    <div class="form-group pb-2">-->
-<!--                      <label class="mb-2 text-dark" for="companyName">Название компании</label>-->
-<!--                      <input class="form-control" type="text" value="Staffing Smarter" id="companyName">-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </form>-->
-
             </section>
             <!-- END Tab -->
           </div>

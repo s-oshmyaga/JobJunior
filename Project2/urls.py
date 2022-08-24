@@ -43,6 +43,7 @@ urlpatterns = [
     path('mycompany/create/', views.my_company_create_view, name='create_a_company'),  # Моя компания - создать
     path('mycompany/', views.my_company_form_view, name='my_company_form'),  # Моя компания (Пустая форма)
     path('mycompany/edit', views.my_company_edit_view, name='my_company_edit'),  # Редактирование информации о компании
+    path('mycompany/delete', views.delete_company_view, name='delete_company'),
 
     path('mycompany/vacancies/', views.my_company_vacancies_view, name='my_vacancies'),  # Мои вакансии (список)
     path('mycompany/vacancies/create/', views.my_company_vacancies_create_view, name='create_a_vacancy'),   # Мои вакансии

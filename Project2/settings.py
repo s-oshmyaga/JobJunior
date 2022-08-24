@@ -41,7 +41,9 @@ INSTALLED_APPS = [
     'crispy_forms',
     'JunJob',
     # for number
-    "phonenumber_field",
+    'phonenumber_field',
+    # for delete
+    'django_cleanup.apps.CleanupConfig',
 ]
 
 MIDDLEWARE = [

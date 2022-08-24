@@ -125,6 +125,16 @@ def my_company_edit_view(request):   # просмотр и редактиров�
     return render(request, 'about_company/MyCompany.html', {'form': form})
 
 
+def delete_company_view(request):  # удаление компании
+    company_for_delete = request.user.company
+    try:
+        company_for_delete.delete()
+        return HttpResponseRedirect(reverse('main'))
+    except:
+        messages.error(request, 'Не удалось удалить компанию')
+        return HttpResponseRedirect(reverse('my_company_edit'))
+
+
 # вакансии
 def my_company_vacancies_view(request):  # Мои вакансии (список)
     return render(request, 'about_company/VacanciesList.html')

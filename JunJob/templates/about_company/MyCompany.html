@@ -6,8 +6,8 @@
         <aside class="pt-3 pb-4 px-4 mb-5 card">
           <h1 class="h4 pt-2 pb-2">Моя компания</h1>
           <div class="nav flex-column nav-pills">
-            <a class="nav-link active" href="#">1. Информация о&nbsp;компании</a>
-            <a class="nav-link" href="#">2. Вакансии</a>
+            <a class="nav-link active" href="{% url 'my_company_edit' %}">1. Информация о&nbsp;компании</a>
+            <a class="nav-link" href="{% url 'my_vacancies' %}">2. Вакансии</a>
           </div>
         </aside>
       </div>
@@ -17,6 +17,12 @@
             <!-- Tab -->
             <section class="tab-pane fade show active">
               <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
+
+                {% if request.user.company %}  <!-- если у пользователя уже есть компания - разрешить редактировать -->
+                <a class="btn btn-default" href="{% url 'my_company_edit' %}">
+                    <span class="glyphicon glyphicon-pencil"></span></a>
+                {% endif %}
+
                 {% if messages %}
                 {% for message in messages %}
                  <div class="message {{ message.tags }}" style="color: red;" align="right">
@@ -24,9 +30,6 @@
                  </div>
                 {% endfor %}
                 {% endif %}
-              <!--  <p class="alert alert-info" role="alert">
-                Информация о компании обновлена
-              </p>  -->
 
               <form method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
@@ -75,23 +78,15 @@
                   <label class="mb-2 text-dark">{{ form.description.label }}</label>
                   {{ form.description }}
                 </div>
-                <div class="form-group">
-                  <input type="submit" class="btn btn-info" value="Сохранить">
-                </div>
+                  <div class="form-group">
+                      <input type="submit" class="btn btn-info" value="Сохранить">
+                  </div>
+                  <div class="form-group">
+                      {% if request.user.company %}
+                      <a class="button" style="color: red" href="{% url 'delete_company' %}">Удалить компанию</a>
+                      {% endif %}
+                  </div>
               </form>
-
-<!--              <form method="POST" enctype="multipart/form-data">-->
-<!--                {% csrf_token %}-->
-<!--                <div class="row">-->
-<!--                  <div class="col-12 col-md-6">-->
-<!--                    <div class="form-group pb-2">-->
-<!--                      <label class="mb-2 text-dark" for="companyName">Название компании</label>-->
-<!--                      <input class="form-control" type="text" value="Staffing Smarter" id="companyName">-->
-<!--                    </div>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </form>-->
-
             </section>
             <!-- END Tab -->
           </div>

@@ -51,7 +51,7 @@ def company_card_view(request, company_id):
     return render(request, 'about_company/CompanyCard.html', context=context)
 
 
-def one_vacancy_view(request, vacancy_id):
+def one_vacancy_view(request, vacancy_id):  # страница с информацией о вакансии
     vacancy = models.Vacancy.objects.get(id=vacancy_id)
     form = ApplicationForm
     context = {
@@ -59,7 +59,7 @@ def one_vacancy_view(request, vacancy_id):
         'form': form
     }
 
-    if request.method == "POST":
+    if request.method == "POST":   # отклик на вакансию
         form = ApplicationForm(request.POST)
         if form.is_valid():  # Проверка валидности формы
             try:   # Если валидна добавляем пользователя и вакансию в форму
@@ -78,7 +78,7 @@ def one_vacancy_view(request, vacancy_id):
     return render(request, 'Vacancy.html', context=context)
 
 
-# все о компании
+# все о компании пользователя
 def my_company_create_view(request):  # страница предложения создания компании
     return render(request, 'about_company/CreateCompany.html')
 
@@ -93,7 +93,7 @@ def my_company_form_view(request):   # пустая форма создания 
             my_company_form.owner = request.user
             try:
                 my_company_form.save()
-                return HttpResponseRedirect(reverse('main'))
+                return HttpResponseRedirect(reverse('my_company_edit'))
             except:
                 messages.error(request, 'Ошибка добавления компании')
                 return render(request, 'about_company/MyCompany.html', {'form': form})
@@ -135,9 +135,11 @@ def delete_company_view(request):  # удаление компании
         return HttpResponseRedirect(reverse('my_company_edit'))
 
 
-# вакансии
+# мои вакансии
 def my_company_vacancies_view(request):  # Мои вакансии (список)
-    return render(request, 'about_company/VacanciesList.html')
+    my_company = request.user.company
+    vacancies_list = models.Vacancy.objects.filter(company=my_company)
+    return render(request, 'about_company/VacanciesList.html', {'vacancies_list': vacancies_list})
 
 
 def my_company_vacancies_create_view(request):  # Мои вакансии (пустая форма)

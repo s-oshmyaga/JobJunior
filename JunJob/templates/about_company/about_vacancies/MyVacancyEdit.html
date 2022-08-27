@@ -1,0 +1,77 @@
+{% extends 'about_company/about_vacancies/VacancyBase.html' %}
+{% block vacancy %}
+<!-- Страница редактирование вакансии -->
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4 tab-content">
+            <!-- Tab -->
+            <section>
+              <h2 class="h4 pt-2 pb-3">{{ vacancy.title }}</h2>
+              <p class="alert alert-info" role="alert">Изменение вакансии</p>
+              <a class="btn btn-default" href="{% url 'my_company_edit' %}">
+                    <span class="glyphicon glyphicon-pencil"></span></a>
+              {% if messages %}  # сообщения об ошибках
+                {% for message in messages %}
+                 <div class="message {{ message.tags }}" style="color: red;" align="right">
+                  {{ message }}
+                 </div>
+                {% endfor %}
+              {% endif %}
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark">{{ form.title.label }}</label>
+                      {{ form.title }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" for="userSpecialization">Специализация</label>
+                      <select class="custom-select mr-sm-2" id="userSpecialization" name="specialty">
+                        <option value="1">Frontend разработка</option>
+                        <option selected value="2">Backend разработка</option>
+                        <option value="3">GameDev</option>
+                        <option value="4">DevOps</option>
+                        <option value="5">Дизайн</option>
+                        <option value="6">Products</option>
+                        <option value="7">Management</option>
+                        <option value="8">Тестирование</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark">{{ form.salary_min.label }}</label>
+                      {{ form.salary_min }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2">{{ form.salary_max.label }}</label>
+                      {{ form.salary_max }}
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark">{{ form.skills.label }}</label>
+                  {{ form.skills }}
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark">{{ form.description.label }}</label>
+                  {{ form.description }}
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn btn-info" value="Изменить">
+                </div>
+              </form>
+              <!-- END Vacancy info -->
+            </section>
+            <!-- END Tab -->
+          </div>
+        </div>
+      </div>
+{% endblock %}

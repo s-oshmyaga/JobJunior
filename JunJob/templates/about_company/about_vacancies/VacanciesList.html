@@ -18,7 +18,7 @@
                         {% load humanize %}
                         <span class="mr-4">{{ vacancy.salary_max|intcomma }}</span>
                         <a href="{% url 'my_vacancy_view' vacancy.id %}" class="text-info">
-                          {{ vacancy.applications.count }} отклика
+                          Отклики - {{ vacancy.applications.count }}
                         </a>
                       </p>
                     </div>

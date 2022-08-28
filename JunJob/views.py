@@ -1,17 +1,16 @@
 from datetime import date
-from django.contrib.auth import authenticate
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
+# from django.core.exceptions import ValidationError
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.views.generic import CreateView
 from django.urls import reverse
 
 from JunJob import models
-from JunJob.accounts import forms
-
-# Create your views here.
 from JunJob.accounts.forms import RegisterUserForm, LoginUserForm, ApplicationForm, MyCompanyForm, MyVacancyForm
+
+# views
 
 
 def main_view(request):
@@ -69,8 +68,9 @@ def one_vacancy_view(request, vacancy_id):  # страница с информа
                 application_form.vacancy = vacancy
                 application_form.save()
                 return render(request, 'sent.html', {'vacancy_id': vacancy.id})
-            finally:
+            except:
                 messages.error(request, 'Ошибка добавления отклика')
+                return render(request, 'Vacancy.html', context=context)
 
         else:
             messages.error(request, 'Форма не валидна')
@@ -195,11 +195,22 @@ def my_vacancy_edit_view(request, vacancy_id):  # моя вакансия ред
 
 
 def my_vacancy_view(request, vacancy_id):  # страница просмотра информации о вакансии
-    pass
+    vacancy = models.Vacancy.objects.get(id=vacancy_id)
+    form = MyVacancyForm(instance=vacancy)
+    applications = models.Application.objects.filter(vacancy=vacancy)
+    return render(request, 'about_company/about_vacancies/MyVacancy.html', {'form': form,
+                                                                            'vacancy': vacancy,
+                                                                            'applications': applications})
 
 
 def my_vacancy_delete_view(request, vacancy_id):  # удаление вакансии
-    pass
+    vacancy_for_delete = models.Vacancy.objects.get(id=vacancy_id)
+    try:
+        vacancy_for_delete.delete()
+        return HttpResponseRedirect(reverse('my_vacancies'))
+    except:
+        messages.error(request, 'Не удалось удалить вакансию')
+        return HttpResponseRedirect(reverse('my_vacancies'))
 
 
 # authentication
@@ -217,7 +228,7 @@ class Register(CreateView):
 
 
 # хэндлеры
-def custom_handler404(request, exceprion):
+def custom_handler404(request, exception):
     return HttpResponseNotFound('Такой страницы не найдено')
 
 

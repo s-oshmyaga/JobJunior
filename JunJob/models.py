@@ -40,4 +40,3 @@ class Application(models.Model):
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE, null=True)
-

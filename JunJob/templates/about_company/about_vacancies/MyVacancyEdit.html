@@ -8,7 +8,7 @@
             <section>
               <h2 class="h4 pt-2 pb-3">{{ vacancy.title }}</h2>
               <p class="alert alert-info" role="alert">Изменение вакансии</p>
-              <a class="btn btn-default" href="{% url 'my_company_edit' %}">
+              <a class="btn btn-default" href="{% url 'my_vacancy_edit' vacancy.id %}">
                     <span class="glyphicon glyphicon-pencil"></span></a>
               {% if messages %}  # сообщения об ошибках
                 {% for message in messages %}

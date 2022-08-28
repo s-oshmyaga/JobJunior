@@ -83,7 +83,7 @@
                   </div>
                   <div class="form-group">
                       {% if request.user.company %}
-                      <a class="button" style="color: red" href="{% url 'delete_company' %}">Удалить компанию</a>
+                      <a class="btn btn-danger" href="{% url 'delete_company' %}">Удалить компанию</a>
                       {% endif %}
                   </div>
               </form>

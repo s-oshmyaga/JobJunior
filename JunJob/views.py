@@ -1,16 +1,16 @@
-from django.contrib.auth import authenticate
+from datetime import date
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
+# from django.core.exceptions import ValidationError
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.views.generic import CreateView
 from django.urls import reverse
 
 from JunJob import models
-from JunJob.accounts import forms
+from JunJob.accounts.forms import RegisterUserForm, LoginUserForm, ApplicationForm, MyCompanyForm, MyVacancyForm
 
-# Create your views here.
-from JunJob.accounts.forms import RegisterUserForm, LoginUserForm, ApplicationForm, MyCompanyForm
+# views
 
 
 def main_view(request):
@@ -68,8 +68,9 @@ def one_vacancy_view(request, vacancy_id):  # страница с информа
                 application_form.vacancy = vacancy
                 application_form.save()
                 return render(request, 'sent.html', {'vacancy_id': vacancy.id})
-            finally:
+            except:
                 messages.error(request, 'Ошибка добавления отклика')
+                return render(request, 'Vacancy.html', context=context)
 
         else:
             messages.error(request, 'Форма не валидна')
@@ -139,15 +140,77 @@ def delete_company_view(request):  # удаление компании
 def my_company_vacancies_view(request):  # Мои вакансии (список)
     my_company = request.user.company
     vacancies_list = models.Vacancy.objects.filter(company=my_company)
-    return render(request, 'about_company/VacanciesList.html', {'vacancies_list': vacancies_list})
+    return render(request, 'about_company/about_vacancies/VacanciesList.html', {'vacancies_list': vacancies_list})
 
 
-def my_company_vacancies_create_view(request):  # Мои вакансии (пустая форма)
-    pass
+def my_vacancy_create_view(request):  # Моя вакансия создание
+    form = MyVacancyForm
+
+    if request.method == 'POST':
+        form = MyVacancyForm(request.POST)
+        if form.is_valid():
+            vacancy_form = form.save(commit=False)
+            id_specialty = int(request.POST.get('specialty'))
+            vacancy_form.specialty = models.Specialty.objects.get(id=id_specialty)
+            vacancy_form.company = request.user.company
+            vacancy_form.published_at = date.today()
+            try:
+                vacancy_form.save()
+                return HttpResponseRedirect(reverse('my_vacancies'))
+            except:
+                messages.error(request, 'Ошибка создания вакансии')
+                return render(request, 'about_company/about_vacancies/CreateVacancy.html', {'form': form})
+        else:
+            messages.error(request, 'Форма не валидна')
+            return render(request, 'about_company/about_vacancies/CreateVacancy.html', {'form': form})
+    else:
+        return render(request, 'about_company/about_vacancies/CreateVacancy.html', {'form': form})
 
 
-def my_company_one_vacancy_view(request, vacancy_id):  # Одна моя вакансия (заполненная форма)
-    return render(request, 'about_company/OneMyVacancy.html')
+def my_vacancy_edit_view(request, vacancy_id):  # моя вакансия редактирование
+    vacancy = models.Vacancy.objects.get(id=vacancy_id)
+    if request.method == 'POST':
+        form = MyVacancyForm(request.POST, instance=vacancy)
+        if form.is_valid():
+            vacancy_form = form.save(commit=False)
+            id_specialty = int(request.POST.get('specialty'))
+            vacancy_form.specialty = models.Specialty.objects.get(id=id_specialty)
+            vacancy_form.company = request.user.company
+            vacancy_form.published_at = date.today()
+            try:
+                vacancy_form.save()
+                return HttpResponseRedirect(reverse('my_vacancies'))
+            except:
+                messages.error(request, 'Ошибка создания вакансии')
+                return render(request, 'about_company/about_vacancies/MyVacancyEdit.html', {'form': form,
+                                                                                            'vacancy': vacancy})
+        else:
+            messages.error(request, 'Форма не валидна')
+            return render(request, 'about_company/about_vacancies/MyVacancyEdit.html', {'form': form,
+                                                                                        'vacancy': vacancy})
+    else:
+        form = MyVacancyForm(instance=vacancy)
+        return render(request, 'about_company/about_vacancies/MyVacancyEdit.html', {'form': form,
+                                                                                    'vacancy': vacancy})
+
+
+def my_vacancy_view(request, vacancy_id):  # страница просмотра информации о вакансии
+    vacancy = models.Vacancy.objects.get(id=vacancy_id)
+    form = MyVacancyForm(instance=vacancy)
+    applications = models.Application.objects.filter(vacancy=vacancy)
+    return render(request, 'about_company/about_vacancies/MyVacancy.html', {'form': form,
+                                                                            'vacancy': vacancy,
+                                                                            'applications': applications})
+
+
+def my_vacancy_delete_view(request, vacancy_id):  # удаление вакансии
+    vacancy_for_delete = models.Vacancy.objects.get(id=vacancy_id)
+    try:
+        vacancy_for_delete.delete()
+        return HttpResponseRedirect(reverse('my_vacancies'))
+    except:
+        messages.error(request, 'Не удалось удалить вакансию')
+        return HttpResponseRedirect(reverse('my_vacancies'))
 
 
 # authentication
@@ -165,7 +228,7 @@ class Register(CreateView):
 
 
 # хэндлеры
-def custom_handler404(request, exceprion):
+def custom_handler404(request, exception):
     return HttpResponseNotFound('Такой страницы не найдено')
 
 

@@ -1,7 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from django.conf import settings
 
 
 from phonenumber_field.formfields import PhoneNumberField
@@ -36,7 +35,8 @@ class LoginUserForm(AuthenticationForm):
 
 class ApplicationForm(forms.ModelForm):   # отклик на вакансию
     written_username = forms.CharField(label='Вас зовут', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    written_phone = PhoneNumberField(label='Ваш телефон', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    written_phone = PhoneNumberField(label='Ваш телефон', widget=forms.TextInput(attrs={'class': 'form-control',
+                                                                                        'name': 'phone_number'}))
     written_cover_letter = forms.CharField(label='Сопроводительное письмо',
                                            widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 8}))
     user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label=None)
@@ -62,12 +62,24 @@ class MyCompanyForm(forms.ModelForm):   # форма редактировани�
                                                                'style': 'color: #000;'}))
     employee_count = forms.IntegerField(label='Количество человек в компании',
                                         widget=forms.TextInput(attrs={'class': 'form-control'}))
-    # owner = forms.ModelChoiceField(queryset=User.objects.all(), empty_label=None)
+
     class Meta:
         model = Company
         fields = ('name', 'logo', 'employee_count', 'location', 'description')
         # widget = {'logo': forms.ImageField(label='Логотип', initial='https://place-hold.it/120x40')}
 
-    # def __init__(self, *args, **kwargs):
-    #     super(MyCompanyForm, self).__init__(*args, **kwargs)
-    #     self.fields.pop('owner')
+
+class MyVacancyForm(forms.ModelForm):  # форма редактирования информации о вакансии
+    title = forms.CharField(label='Название вакансии', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    skills = forms.CharField(label='Требуемые навыки', widget=forms.Textarea(attrs={'class': 'form-control',
+                                                                                    'rows': 3,
+                                                                                    'style': 'color:#000;'}))
+    description = forms.CharField(label='Описание вакансии', widget=forms.Textarea(attrs={'class': 'form-control',
+                                                                                          'rows': 13,
+                                                                                          'style': 'color:#000;'}))
+    salary_min = forms.IntegerField(label='Зарплата от', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    salary_max = forms.IntegerField(label='Зарплата до', widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Vacancy
+        fields = ('title', 'skills', 'description', 'salary_min', 'salary_max')

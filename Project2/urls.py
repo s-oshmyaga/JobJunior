@@ -17,7 +17,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.urls import path, include
+from django.urls import path
 
 
 from JunJob import views
@@ -43,12 +43,15 @@ urlpatterns = [
     path('mycompany/create/', views.my_company_create_view, name='create_a_company'),  # Моя компания - создать
     path('mycompany/', views.my_company_form_view, name='my_company_form'),  # Моя компания (Пустая форма)
     path('mycompany/edit', views.my_company_edit_view, name='my_company_edit'),  # Редактирование информации о компании
-    path('mycompany/delete', views.delete_company_view, name='delete_company'),
+    path('mycompany/delete', views.delete_company_view, name='delete_company'),  # Удаление компании
 
     path('mycompany/vacancies/', views.my_company_vacancies_view, name='my_vacancies'),  # Мои вакансии (список)
-    path('mycompany/vacancies/create/', views.my_company_vacancies_create_view, name='create_a_vacancy'),   # Мои вакансии
-    path('mycompany/vacancies/<int:vacancy_id>', views.my_company_one_vacancy_view, name='my_one_vacancy'),  # Одна моя
-    # вакансия (заполненная форма)
+    path('mycompany/vacancies/create/', views.my_vacancy_create_view, name='create_a_vacancy'),   # Создание вакансии
+    path('mycompany/vacancies/<int:vacancy_id>/edit', views.my_vacancy_edit_view, name='my_vacancy_edit'),  # Редакти-
+    # рование вакансии (заполненная форма)
+    path('mycompany/vacancies/<int:vacancy_id>', views.my_vacancy_view, name='my_vacancy_view'),  # просмотр вакансии
+    path('mycompany/vacancies/<int:vacancy_id>/delete', views.my_vacancy_delete_view, name='my_vacancy_delete'),
+
     # аутентификация
     path('login', views.LoginUser.as_view(), name='login'),
     path('register', views.Register.as_view(), name='register'),

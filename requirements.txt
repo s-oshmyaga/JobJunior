@@ -1,0 +1,14 @@
+asgiref==3.5.2
+backports.zoneinfo==0.2.1
+Django==4.1
+django-cleanup==6.0.0
+django-crispy-forms==1.14.0
+django-phonenumber-field==6.3.0
+flake8==5.0.4
+mccabe==0.7.0
+phonenumbers==8.12.53
+phonenumberslite==8.12.53
+Pillow==9.2.0
+pycodestyle==2.9.1
+pyflakes==2.5.0
+sqlparse==0.4.2

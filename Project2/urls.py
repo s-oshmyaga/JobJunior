@@ -57,6 +57,9 @@ urlpatterns = [
     path('register', views.Register.as_view(), name='register'),
     path('logout', LogoutView.as_view()),
 
+    # about user
+    path('profile', views.profile_view, name='profile'),
+
 ]
 
 if settings.DEBUG:

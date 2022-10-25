@@ -227,6 +227,10 @@ class Register(CreateView):
     success_url = 'login'
 
 
+# Все о пользователе
+def profile_view(request):
+    return render(request, 'accounts/profile.html')
+
 # хэндлеры
 def custom_handler404(request, exception):
     return HttpResponseNotFound('Такой страницы не найдено')

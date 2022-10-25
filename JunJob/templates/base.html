@@ -34,7 +34,7 @@
                 {% endif %}
               </button>
               <div class="dropdown-menu dropdown-menu-right mt-3">
-                <a href="#" class="dropdown-item py-2">Профиль</a>
+                <a href="{% url 'profile' %}" class="dropdown-item py-2">Профиль</a>
                 <a href="#" class="dropdown-item py-2">Резюме</a>
                 {% if request.user.company %}
                 <a href="{% url 'my_company_edit' %}" class="dropdown-item py-2">Компания</a>

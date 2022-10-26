@@ -228,8 +228,17 @@ class Register(CreateView):
 
 
 # Все о пользователе
-def profile_view(request):
+def profile_view(request):  # страница профиля
     return render(request, 'accounts/profile.html')
+
+
+def resume_create_view(request):  # страница создания резюме
+    return render(request, 'accounts/resume_create.html')
+
+
+def resume_edit_view(request):  # страница готового резюме / редактирования
+    return render(request, 'accounts/resume_edit.html')
+
 
 # хэндлеры
 def custom_handler404(request, exception):

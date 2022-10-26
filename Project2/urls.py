@@ -59,6 +59,8 @@ urlpatterns = [
 
     # about user
     path('profile', views.profile_view, name='profile'),
+    path('resume_create', views.resume_create_view, name='resume_create'),
+    path('resume', views.resume_edit_view, name='resume'),
 
 ]
 

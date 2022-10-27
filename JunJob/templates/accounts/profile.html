@@ -8,7 +8,11 @@
           <div class="nav flex-column nav-pills">
             <a class="nav-link" href="#">1. Мое резюме</a>
             <a class="nav-link" href="#">2. Мои отклики</a>
+            {% if request.user.company %}
             <a class="nav-link" href="{% url 'my_company_edit' %}">3. Моя компания</a>
+            {% else %}
+            <a class="nav-link" href="{% url 'create_a_company' %}">3. Моя компания</a>
+            {% endif %}
           </div>
         </aside>
       </div>

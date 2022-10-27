@@ -40,3 +40,35 @@ class Application(models.Model):
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE, null=True)
+
+
+class Resume(models.Model):
+    class Grade(models.TextChoices):
+        YOUNG = 'Young'
+        JUNIOR = 'Junior'
+        MIDDLE = 'Middle'
+        SENIOR = 'Senior'
+        TEAMLEAD = 'TeamLead'
+
+    class Status(models.TextChoices):
+        NOTLOOKING = 'Не ищу работу'
+        JOBOFFER = 'Рассматриваю предложения'
+        LOOKING = 'Ищу работу'
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='resume')
+    name = models.CharField(max_length=60)
+    surname = models.CharField(max_length=60)
+    grade = models.CharField(
+        max_length=10,
+        choices=Grade.choices,
+        default=Grade.JUNIOR,
+    )
+    status = models.CharField(
+        max_length=30,
+        choices=Status.choices,
+        default=Status.LOOKING,
+    )
+    salary = models.FloatField()
+    specialty = models.CharField(max_length=20)
+    education = models.CharField(max_length=100)
+    experience = models.TextField()
+    portfolio = models.CharField(max_length=200)

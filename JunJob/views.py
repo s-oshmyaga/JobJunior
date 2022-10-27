@@ -20,7 +20,7 @@ def main_view(request):
         'specialty_list': specialty_list,
         'company_list': company_list,
         }
-    return render(request, 'main.html', context=context)
+    return render(request, 'common/main.html', context=context)
 
 
 def vacancies_view(request):
@@ -28,7 +28,7 @@ def vacancies_view(request):
     context = {
         'vacancies_list': vacancies_list,
     }
-    return render(request, 'Vacancies.html', context=context)
+    return render(request, 'common/Vacancies.html', context=context)
 
 
 def specialty_view(request, specialty_id):
@@ -38,7 +38,7 @@ def specialty_view(request, specialty_id):
         'specialty_vacancies': specialty_vacancies,
         'specialty': specialty,
     }
-    return render(request, 'Specialty.html', context=context)
+    return render(request, 'common/Specialty.html', context=context)
 
 
 def company_card_view(request, company_id):
@@ -67,16 +67,16 @@ def one_vacancy_view(request, vacancy_id):  # страница с информа
                 application_form.user = request.user
                 application_form.vacancy = vacancy
                 application_form.save()
-                return render(request, 'sent.html', {'vacancy_id': vacancy.id})
+                return render(request, 'common/sent.html', {'vacancy_id': vacancy.id})
             except:
                 messages.error(request, 'Ошибка добавления отклика')
-                return render(request, 'Vacancy.html', context=context)
+                return render(request, 'common/Vacancy.html', context=context)
 
         else:
             messages.error(request, 'Форма не валидна')
-            return render(request, 'Vacancy.html', context=context)
+            return render(request, 'common/Vacancy.html', context=context)
 
-    return render(request, 'Vacancy.html', context=context)
+    return render(request, 'common/Vacancy.html', context=context)
 
 
 # все о компании пользователя
@@ -236,8 +236,12 @@ def resume_create_view(request):  # страница создания резюм
     return render(request, 'accounts/resume_create.html')
 
 
-def resume_edit_view(request):  # страница готового резюме / редактирования
+def resume_edit_view(request):  # страница редактирования резюме
     return render(request, 'accounts/resume_edit.html')
+
+
+def resume_view(request):  # страница готового резюме
+    return render(request, 'accounts.resume_edit.html')
 
 
 # хэндлеры

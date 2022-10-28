@@ -61,7 +61,8 @@ urlpatterns = [
     path('profile', views.profile_view, name='profile'),
     path('resume/create', views.resume_create_view, name='resume_create'),
     path('resume/edit', views.resume_edit_view, name='resume_edit'),
-    path('resume', views.resume_view, name='resume')
+    path('resume', views.resume_view, name='resume'),
+    path('resume/delete', views.resume_delete_view, name='resume_delete')
 
 ]
 

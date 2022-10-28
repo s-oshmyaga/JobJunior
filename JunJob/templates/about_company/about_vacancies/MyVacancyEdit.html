@@ -10,7 +10,7 @@
               <p class="alert alert-info" role="alert">Изменение вакансии</p>
               <a class="btn btn-default" href="{% url 'my_vacancy_edit' vacancy.id %}">
                     <span class="glyphicon glyphicon-pencil"></span></a>
-              {% if messages %}  # сообщения об ошибках
+              {% if messages %}  <!- сообщения об ошибках ->
                 {% for message in messages %}
                  <div class="message {{ message.tags }}" style="color: red;" align="right">
                   {{ message }}

@@ -5,7 +5,8 @@ from django.contrib.auth.models import User
 
 from phonenumber_field.formfields import PhoneNumberField
 
-from JunJob.models import Application, Vacancy, Company
+from JunJob.models import Application, Vacancy, Company, Resume
+from JunJob.accounts.Choices import SPECIALTY_CHOICES, GRADE, STATUS
 
 
 # формы аутентификации
@@ -83,3 +84,29 @@ class MyVacancyForm(forms.ModelForm):  # форма редактирования
     class Meta:
         model = Vacancy
         fields = ('title', 'skills', 'description', 'salary_min', 'salary_max')
+
+
+class ResumeForm(forms.ModelForm):  # форма резюме
+    name = forms.CharField(label='Имя', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    surname = forms.CharField(label='Фамилия', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    status = forms.ChoiceField(label='Готовность к работе', choices=STATUS,
+                               widget=forms.Select(attrs={'class': 'custom-select mr-sm-2'}),
+                               initial='3', required=True)
+    salary = forms.FloatField(label='Ожидаемая зарплата', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    specialty = forms.ChoiceField(label='Специализация', choices=SPECIALTY_CHOICES,
+                                  widget=forms.Select(attrs={'class': 'custom-select mr-sm-2'}),
+                                  initial='', required='True')
+    grade = forms.ChoiceField(label='Квалификация', widget=forms.Select(attrs={'class': 'custom-select mr-sm-2'}),
+                              choices=GRADE, initial='2', required=True)
+    education = forms.CharField(label='Образование',
+                                widget=forms.Textarea(attrs={'class': 'form-control text-uppercase',
+                                                             'rows': 4,
+                                                             'style': 'color:#000;'}))
+    experience = forms.CharField(label='Опыт работы', widget=forms.Textarea(attrs={'class': 'form-control',
+                                                                                   'rows': 4,
+                                                                                   'style': 'color:#000;'}))
+    portfolio = forms.CharField(label='Ссылка на портфолио', widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Resume
+        fields = ('name', 'surname', 'status', 'salary', 'specialty', 'grade', 'education', 'experience', 'portfolio')

@@ -3,7 +3,7 @@ from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-# from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import CreateView
@@ -24,10 +24,28 @@ def main_view(request):
         'specialty_list': specialty_list,
         'company_list': company_list,
         }
+    if request.GET.get('search'):
+        search = request.GET.get('search')
+        return search_view(request, query=search)
     return render(request, 'common/main.html', context=context)
 
 
-def vacancies_view(request):
+def search_view(request, query=None):  # поиск
+    if query:
+        search_result = models.Vacancy.objects.filter(Q(title__icontains=query) |
+                                                      Q(skills__icontains=query)).order_by('published_at')
+        return render(request, 'common/search.html', {'search_result': search_result,
+                                                      'query': query})
+    if request.GET.get('search'):
+        search_vacancy = request.GET.get('search')
+        search_result = models.Vacancy.objects.filter(Q(title__icontains=search_vacancy) |
+                                                      Q(skills__icontains=search_vacancy)).order_by('published_at')
+        return render(request, 'common/search.html', {'search_result': search_result,
+                                                      'query': search_vacancy})
+    return render(request, 'common/search.html')
+
+
+def vacancies_view(request):  # список вакансий
     vacancies_list = models.Vacancy.objects.all()
     context = {
         'vacancies_list': vacancies_list,
@@ -35,7 +53,7 @@ def vacancies_view(request):
     return render(request, 'common/Vacancies.html', context=context)
 
 
-def specialty_view(request, specialty_id):
+def specialty_view(request, specialty_id):  # вакансии по специальности
     specialty = models.Specialty.objects.get(id=specialty_id)
     specialty_vacancies = models.Vacancy.objects.filter(specialty=specialty)
     context = {
@@ -45,7 +63,7 @@ def specialty_view(request, specialty_id):
     return render(request, 'common/Specialty.html', context=context)
 
 
-def company_card_view(request, company_id):
+def company_card_view(request, company_id):  # список вакансий компании
     company = models.Company.objects.get(id=company_id)
     company_vacancies_list = models.Vacancy.objects.filter(company=company)
     context = {
@@ -272,7 +290,7 @@ def resume_view(request):  # страница готового резюме
     return render(request, 'accounts/resume.html', {'form': form})
 
 
-def resume_delete_view(request):
+def resume_delete_view(request):  # удаление резюме
     resume_for_delete = request.user.resume
     try:
         resume_for_delete.delete()

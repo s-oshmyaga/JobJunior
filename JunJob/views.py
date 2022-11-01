@@ -10,6 +10,7 @@ from django.views.generic import CreateView
 from django.urls import reverse
 
 from JunJob import models
+from JunJob import func
 from JunJob.accounts.forms import RegisterUserForm, LoginUserForm, ApplicationForm, MyCompanyForm, MyVacancyForm, \
     ResumeForm
 
@@ -24,29 +25,45 @@ def main_view(request):
         'specialty_list': specialty_list,
         'company_list': company_list,
         }
-    if request.GET.get('search'):
-        search = request.GET.get('search')
+    if request.GET.get('q'):
+        search = request.GET.get('q')
         return search_view(request, query=search)
     return render(request, 'common/main.html', context=context)
 
 
 def search_view(request, query=None):  # поиск
+    # if query:
+    #     search_result = models.Vacancy.objects.filter(Q(title__icontains=query) |
+    #                                                   Q(skills__icontains=query)).order_by('published_at')
+    #     return render(request, 'common/search.html', {'search_result': search_result,
+    #                                                   'query': query})
     if query:
-        search_result = models.Vacancy.objects.filter(Q(title__icontains=query) |
-                                                      Q(skills__icontains=query)).order_by('published_at')
+        search_result = func.request_to_bd(query)
         return render(request, 'common/search.html', {'search_result': search_result,
                                                       'query': query})
-    if request.GET.get('search'):
-        search_vacancy = request.GET.get('search')
+    if request.GET.get('q'):
+        search_vacancy = request.GET.get('q')
         search_result = models.Vacancy.objects.filter(Q(title__icontains=search_vacancy) |
                                                       Q(skills__icontains=search_vacancy)).order_by('published_at')
         return render(request, 'common/search.html', {'search_result': search_result,
                                                       'query': search_vacancy})
+
+
+    # if query:
+    #     search_result = func.request_to_bd(query)
+    #     return render(request, 'common/search.html', {'search_result': search_result,
+    #                                                   'query': query})
+    # if request.GET.get('q'):
+    #     search_vacancy = request.GET.get('q')
+    #     search_result = func.request_to_bd(search_vacancy)
+    #     return render(request, 'common/search.html', {'search_result': search_result,
+    #                                                   'query': search_vacancy})
+
     return render(request, 'common/search.html')
 
 
 def vacancies_view(request):  # список вакансий
-    vacancies_list = models.Vacancy.objects.all()
+    vacancies_list = models.Vacancy.objects.all().order_by('published_at')
     context = {
         'vacancies_list': vacancies_list,
     }
@@ -55,7 +72,7 @@ def vacancies_view(request):  # список вакансий
 
 def specialty_view(request, specialty_id):  # вакансии по специальности
     specialty = models.Specialty.objects.get(id=specialty_id)
-    specialty_vacancies = models.Vacancy.objects.filter(specialty=specialty)
+    specialty_vacancies = models.Vacancy.objects.filter(specialty=specialty).order_by('published_at')
     context = {
         'specialty_vacancies': specialty_vacancies,
         'specialty': specialty,
@@ -127,7 +144,7 @@ def my_company_form_view(request):   # пустая форма создания 
         return render(request, 'about_company/MyCompany.html', {'form': form})
 
 
-def my_company_edit_view(request):   # просмотр и редактирование формы
+def my_company_edit_view(request):   # просмотр и редактирование формы компании
     my_company = request.user.company
     if request.method == 'POST':
         form = MyCompanyForm(request.POST, request.FILES, instance=my_company)

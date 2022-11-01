@@ -33,7 +33,7 @@ handler500 = custom_handler500
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.main_view, name='main'),  # Главная
-    path('search?s=<qwery>', views.search_view, name='search'),  # поиск
+    path('search', views.search_view, name='search'),  # поиск
     path('vacancies', views.vacancies_view, name='vacancies'),  # Все вакансии
     path('vacancies/cat/<int:specialty_id>', views.specialty_view, name='specialty'),  # Специальность
     path('companies/<int:company_id>', views.company_card_view, name='companycard'),  # Вакансии компании

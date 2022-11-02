@@ -32,32 +32,16 @@ def main_view(request):
 
 
 def search_view(request, query=None):  # поиск
-    # if query:
-    #     search_result = models.Vacancy.objects.filter(Q(title__icontains=query) |
-    #                                                   Q(skills__icontains=query)).order_by('published_at')
-    #     return render(request, 'common/search.html', {'search_result': search_result,
-    #                                                   'query': query})
     if query:
         search_result = func.request_to_bd(query)
         return render(request, 'common/search.html', {'search_result': search_result,
                                                       'query': query})
+
     if request.GET.get('q'):
         search_vacancy = request.GET.get('q')
-        search_result = models.Vacancy.objects.filter(Q(title__icontains=search_vacancy) |
-                                                      Q(skills__icontains=search_vacancy)).order_by('published_at')
+        search_result = func.request_to_bd(search_vacancy)
         return render(request, 'common/search.html', {'search_result': search_result,
                                                       'query': search_vacancy})
-
-
-    # if query:
-    #     search_result = func.request_to_bd(query)
-    #     return render(request, 'common/search.html', {'search_result': search_result,
-    #                                                   'query': query})
-    # if request.GET.get('q'):
-    #     search_vacancy = request.GET.get('q')
-    #     search_result = func.request_to_bd(search_vacancy)
-    #     return render(request, 'common/search.html', {'search_result': search_result,
-    #                                                   'query': search_vacancy})
 
     return render(request, 'common/search.html')
 

@@ -34,8 +34,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.main_view, name='main'),  # Главная
     path('search', views.search_view, name='search'),  # поиск
-    path('vacancies', views.vacancies_view, name='vacancies'),  # Все вакансии
-    path('vacancies/cat/<int:specialty_id>', views.specialty_view, name='specialty'),  # Специальность
+    path('vacancies', views.VacanciesListView.as_view(), name='vacancies'),  # Все вакансии
+    path('vacancies/cat/<int:specialty_id>', views.SpecialtyVacanciesView.as_view(), name='specialty'),  # Специальность
     path('companies/<int:company_id>', views.company_card_view, name='companycard'),  # Вакансии компании
     path('vacancies/<int:vacancy_id>', views.one_vacancy_view, name='onevacancy'),  # Одна вакансия
     # path('vacancies/<int:vacancy_id>/sent/', views.sent_an_application_view, name='sent'),   # Отправка заявки

@@ -3,10 +3,10 @@ from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
-from django.db.models import Q
+
 from django.http import HttpResponseNotFound, HttpResponseServerError, HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
 from django.urls import reverse
 
 from JunJob import models
@@ -46,22 +46,28 @@ def search_view(request, query=None):  # поиск
     return render(request, 'common/search.html')
 
 
-def vacancies_view(request):  # список вакансий
-    vacancies_list = models.Vacancy.objects.all().order_by('published_at')
-    context = {
-        'vacancies_list': vacancies_list,
-    }
-    return render(request, 'common/Vacancies.html', context=context)
+class VacanciesListView(ListView):  # список вакансий
+    model = models.Vacancy
+    template_name = 'common/Vacancies.html'
+    context_object_name = 'vacancies_list'
+
+    def get_queryset(self):
+        return models.Vacancy.objects.order_by('-published_at')
 
 
-def specialty_view(request, specialty_id):  # вакансии по специальности
-    specialty = models.Specialty.objects.get(id=specialty_id)
-    specialty_vacancies = models.Vacancy.objects.filter(specialty=specialty).order_by('published_at')
-    context = {
-        'specialty_vacancies': specialty_vacancies,
-        'specialty': specialty,
-    }
-    return render(request, 'common/Specialty.html', context=context)
+class SpecialtyVacanciesView(ListView):  # вакансии по специальности
+    model = models.Vacancy
+    template_name = 'common/Specialty.html'
+    context_object_name = 'specialty_vacancies'
+
+    def get_queryset(self):
+        specialty = models.Specialty.objects.get(id=self.kwargs['specialty_id'])
+        return models.Vacancy.objects.filter(specialty=specialty).order_by('-published_at')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['specialty'] = models.Specialty.objects.get(id=self.kwargs['specialty_id'])
+        return context
 
 
 def company_card_view(request, company_id):  # список вакансий компании

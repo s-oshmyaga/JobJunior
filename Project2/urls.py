@@ -1,13 +1,13 @@
 """Project2 URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
+The `urlpatterns` list routes URLs to Views. For more information please see:
     https://docs.djangoproject.com/en/4.1/topics/http/urls/
 Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
+Function Views
+    1. Add an import:  from my_app import Views
+    2. Add a URL to urlpatterns:  path('', Views.home, name='home')
+Class-based Views
+    1. Add an import:  from other_app.Views import Home
     2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
 Including another URLconf
     1. Import the include function: from django.urls import include, path
@@ -20,11 +20,11 @@ from django.contrib.auth.views import LogoutView
 from django.urls import path
 
 
-from JunJob import views
+from JunJob.Views import views, views_user, views_company, views_vacancies
 
 
-from JunJob.views import custom_handler404
-from JunJob.views import custom_handler500
+from JunJob.Views.views import custom_handler404
+from JunJob.Views.views import custom_handler500
 
 
 handler404 = custom_handler404
@@ -36,22 +36,25 @@ urlpatterns = [
     path('search', views.search_view, name='search'),  # поиск
     path('vacancies', views.VacanciesListView.as_view(), name='vacancies'),  # Все вакансии
     path('vacancies/cat/<int:specialty_id>', views.SpecialtyVacanciesView.as_view(), name='specialty'),  # Специальность
-    path('companies/<int:company_id>', views.company_card_view, name='companycard'),  # Вакансии компании
+    path('companies/<int:company_id>', views_company.CompanyCard.as_view(), name='companycard'),  # Вакансии компании
     path('vacancies/<int:vacancy_id>', views.one_vacancy_view, name='onevacancy'),  # Одна вакансия
-    # path('vacancies/<int:vacancy_id>/sent/', views.sent_an_application_view, name='sent'),   # Отправка заявки
+    # path('vacancies/<int:vacancy_id>/sent/', Views.sent_an_application_view, name='sent'),   # Отправка заявки
     # Все о компании
-    # path('mycompany/letsstart/', views.my_company_lets_start_view, name='lets_start'),
-    path('mycompany/create/', views.my_company_create_view, name='create_a_company'),  # Моя компания - создать
-    path('mycompany/', views.my_company_form_view, name='my_company_form'),  # Моя компания (Пустая форма)
-    path('mycompany/edit', views.my_company_edit_view, name='my_company_edit'),  # Редактирование информации о компании
-    path('mycompany/delete', views.delete_company_view, name='delete_company'),  # Удаление компании
+    # path('mycompany/letsstart/', Views.my_company_lets_start_view, name='lets_start'),
+    path('mycompany/create/', views_company.my_company_create_view, name='create_a_company'),  # Моя компания - создать
+    path('mycompany/', views_company.my_company_form_view, name='my_company_form'),  # Моя компания (Пустая форма)
+    path('mycompany/edit', views_company.my_company_edit_view, name='my_company_edit'),  # Редактирование
+    # информации о компании
+    path('mycompany/delete', views_company.delete_company_view, name='delete_company'),  # Удаление компании
 
-    path('mycompany/vacancies/', views.my_company_vacancies_view, name='my_vacancies'),  # Мои вакансии (список)
-    path('mycompany/vacancies/create/', views.my_vacancy_create_view, name='create_a_vacancy'),   # Создание вакансии
-    path('mycompany/vacancies/<int:vacancy_id>/edit', views.my_vacancy_edit_view, name='my_vacancy_edit'),  # Редакти-
-    # рование вакансии (заполненная форма)
-    path('mycompany/vacancies/<int:vacancy_id>', views.my_vacancy_view, name='my_vacancy_view'),  # просмотр вакансии
-    path('mycompany/vacancies/<int:vacancy_id>/delete', views.my_vacancy_delete_view, name='my_vacancy_delete'),
+    path('mycompany/vacancies/', views_vacancies.UsersVacancies.as_view(), name='my_vacancies'),  # Мои вакансии
+    path('mycompany/vacancies/create/', views_vacancies.my_vacancy_create_view, name='create_a_vacancy'),   # Создание
+    # вакансии
+    # Редактирование вакансии (заполненная форма)
+    path('mycompany/vacancies/<int:vacancy_id>/edit', views_vacancies.my_vacancy_edit_view, name='my_vacancy_edit'),
+    path('mycompany/vacancies/<int:vacancy_id>', views_vacancies.my_vacancy_view, name='my_vacancy_view'),  # просмотр
+    # вакансии
+    path('mycompany/vacancies/<int:vacancy_id>/delete', views_vacancies.my_vacancy_delete_view, name='my_vacancy_delete'),
 
     # аутентификация
     path('login', views.LoginUser.as_view(), name='login'),
@@ -59,11 +62,11 @@ urlpatterns = [
     path('logout', LogoutView.as_view()),
 
     # about user
-    path('profile', views.profile_view, name='profile'),
-    path('resume/create', views.resume_create_view, name='resume_create'),
-    path('resume/edit', views.resume_edit_view, name='resume_edit'),
-    path('resume', views.resume_view, name='resume'),
-    path('resume/delete', views.resume_delete_view, name='resume_delete')
+    path('profile', views_user.profile_view, name='profile'),
+    path('resume/create', views_user.resume_create_view, name='resume_create'),
+    path('resume/edit', views_user.resume_edit_view, name='resume_edit'),
+    path('resume', views_user.resume_view, name='resume'),
+    path('resume/delete', views_user.resume_delete_view, name='resume_delete')
 
 ]
 

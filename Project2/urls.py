@@ -42,7 +42,7 @@ urlpatterns = [
     # Все о компании
     # path('mycompany/letsstart/', Views.my_company_lets_start_view, name='lets_start'),
     path('mycompany/create/', views_company.my_company_create_view, name='create_a_company'),  # Моя компания - создать
-    path('mycompany/', views_company.my_company_form_view, name='my_company_form'),  # Моя компания (Пустая форма)
+    path('mycompany/', views_company.CompanyCreateView.as_view(), name='my_company_form'),  # Моя компания создание
     path('mycompany/edit', views_company.my_company_edit_view, name='my_company_edit'),  # Редактирование
     # информации о компании
     path('mycompany/delete', views_company.delete_company_view, name='delete_company'),  # Удаление компании
@@ -63,6 +63,7 @@ urlpatterns = [
 
     # about user
     path('profile', views_user.profile_view, name='profile'),
+    path('profile/edit', views_user.profile_edit, name='profile_edit'),
     path('resume/create', views_user.resume_create_view, name='resume_create'),
     path('resume/edit', views_user.resume_edit_view, name='resume_edit'),
     path('resume', views_user.resume_view, name='resume'),

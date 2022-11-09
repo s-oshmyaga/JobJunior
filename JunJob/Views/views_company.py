@@ -1,8 +1,8 @@
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import ListView
-from django.urls import reverse
+from django.views.generic import ListView, FormView
+from django.urls import reverse, reverse_lazy
 
 from JunJob import models
 from JunJob.accounts.forms import MyCompanyForm
@@ -26,25 +26,19 @@ def my_company_create_view(request):  # страница предложения 
     return render(request, 'about_company/CreateCompany.html')
 
 
-def my_company_form_view(request):   # пустая форма создания компании
-    form = MyCompanyForm
+class CompanyCreateView(FormView):  # пустая форма создания компании
+    template_name = 'about_company/MyCompany.html'
+    form_class = MyCompanyForm
+    success_url = reverse_lazy('my_company_edit')
 
-    if request.method == 'POST':
-        form = MyCompanyForm(request.POST, request.FILES)
-        if form.is_valid():
-            my_company_form = form.save(commit=False)
-            my_company_form.owner = request.user
-            try:
-                my_company_form.save()
-                return HttpResponseRedirect(reverse('my_company_edit'))
-            except:
-                messages.error(request, 'Ошибка добавления компании')
-                return render(request, 'about_company/MyCompany.html', {'form': form})
-        else:
-            messages.error(request, 'Форма не валидна')
-            return render(request, 'about_company/MyCompany.html', {'form': form})
-    else:
-        return render(request, 'about_company/MyCompany.html', {'form': form})
+    def form_valid(self, form):
+        form.instance.owner = self.request.user
+        form.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Форма заполнена некорректно')
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 def my_company_edit_view(request):   # просмотр и редактирование формы компании

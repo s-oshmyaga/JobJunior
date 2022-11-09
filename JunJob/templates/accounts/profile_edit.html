@@ -28,7 +28,15 @@
           <div class="card-body px-4 pb-4">
             <section class="tab-pane fade show active">
               <h2 class="h4 pt-2 pb-3">{{ request.user.username }}</h2>
-              <form action="{% url 'profile_edit' %}" enctype="multipart/form-data">
+              {% if messages %}  <!- сообщения об ошибках ->
+                {% for message in messages %}
+                 <div class="message {{ message.tags }}" style="color: red;" align="right">
+                  {{ message }}
+                 </div>
+                {% endfor %}
+              {% endif %}
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
                 <div class="form-group pb-2">
                       <label class="mb-2 text-dark">{{ form_user.email.label }}</label>
                       {{ form_user.email }}
@@ -61,24 +69,8 @@
                     </div>
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col-12 col-md-6">
-                    <div class="form-group pb-2">
-                      <a href="#">Мои отклики
-                        {{ request.user.applications.count }}</a>
-                    </div>
-                  </div>
-                  <div class="col-12 col-md-6">
-                    <div class="form-group pb-2">
-                      <a href="#">Предложения</a>
-                    </div>
-                  </div>
-                </div>
                 <div class="form-group">
-                  <input type="submit" class="btn btn-info" value="Изменить">
-                </div>
-                <div class="form-group">
-                  <a class="btn btn-danger" href="#">Удалить аккаунт</a>
+                  <input type="submit" class="btn btn-info" value="Сохранить">
                 </div>
               </form>
             </section>

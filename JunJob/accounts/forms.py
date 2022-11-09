@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 
 from phonenumber_field.formfields import PhoneNumberField
 
-from JunJob.models import Application, Vacancy, Company, Resume
+from JunJob.models import Application, Vacancy, Company, Resume, Profile
 from JunJob.accounts.Choices import SPECIALTY_CHOICES, GRADE, STATUS
 
 
@@ -110,3 +110,29 @@ class ResumeForm(forms.ModelForm):  # форма резюме
     class Meta:
         model = Resume
         fields = ('name', 'surname', 'status', 'salary', 'specialty', 'grade', 'education', 'experience', 'portfolio')
+
+
+class ProfileForm(forms.ModelForm):
+    birthday = forms.DateField(required=False, label='Дата рождения',
+                               widget=forms.TextInput(attrs={'class': 'form-control'}))
+    country = forms.CharField(required=False, label='Страна',
+                              widget=forms.TextInput(attrs={'class': 'form-control'}))
+    city = forms.CharField(required=False, label='город',
+                           widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Profile
+        fields = ('birthday', 'country', 'city')
+
+
+class UserForm(forms.ModelForm):
+    email = forms.EmailField(required=False, label='email',
+                             widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(required=False, label='Фамилия',
+                                widget=forms.TextInput(attrs={'class': 'form-control'}))
+    first_name = forms.CharField(required=False, label='Имя',
+                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = User
+        fields = ('email', 'last_name', 'first_name')

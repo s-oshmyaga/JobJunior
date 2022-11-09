@@ -1,5 +1,6 @@
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
+from django.db import DatabaseError
 from django.http import HttpResponseNotFound, HttpResponseServerError
 from django.shortcuts import render
 from django.views.generic import CreateView, ListView
@@ -80,7 +81,7 @@ def one_vacancy_view(request, vacancy_id):  # страница с информа
                 application_form.vacancy = vacancy
                 application_form.save()
                 return render(request, 'common/sent.html', {'vacancy_id': vacancy.id})
-            except:
+            except DatabaseError:
                 messages.error(request, 'Ошибка добавления отклика')
                 return render(request, 'common/Vacancy.html', context=context)
 

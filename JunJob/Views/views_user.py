@@ -1,5 +1,9 @@
+"""
+Представления страниц пользователя
+"""
+
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError, DatabaseError
 
 from django.http import HttpResponseRedirect
@@ -95,3 +99,7 @@ def resume_delete_view(request):  # удаление резюме
     except DatabaseError:
         messages.error(request, 'Не удалось удалить резюме')
         return HttpResponseRedirect(reverse('resume'))
+
+
+def user_answers_view(request):  # просмотр приглашений пользователя
+    pass

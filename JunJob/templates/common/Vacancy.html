@@ -23,25 +23,32 @@
           </div>
 
           {% if request.user.is_authenticated %}  <!-- Если пользователь авторизован - можно откликнуться -->
-            <form class="card mt-4 mb-3" enctype="multipart/form-data" method="POST">
-              {% csrf_token %}
-              <div class="card-body mx-3">
-                <p class="h5 mt-3 font-weight-normal">Отозваться на вакансию</p>
-                {% for message in messages %}
-                <div class="message {{ message.tags }}" style="color: red;" align="right">
-                  {{ message }}
+            {% if can_answer %}
+              <form class="card mt-4 mb-3" enctype="multipart/form-data" method="POST">
+                {% csrf_token %}
+                <div class="card-body mx-3">
+                  <p class="h5 mt-3 font-weight-normal">Отозваться на вакансию</p>
+                  {% for message in messages %}
+                  <div class="message {{ message.tags }}" style="color: red;" align="right">
+                    {{ message }}
+                  </div>
+                  {% endfor %}
+                  {% for f in form %}
+                  <div class="form-group">
+                    <label class="mb-1">{{ f.label }}</label>
+                    {{ f }}
+                  </div>
+                  {% endfor %}
+                  <div class="checkbox mb-3"></div>
+                  <button class="btn btn-primary btn-lg btn-block" type="submit">Отозваться</button>
                 </div>
-                {% endfor %}
-                {% for f in form %}
-                <div class="form-group">
-                  <label class="mb-1">{{ f.label }}</label>
-                  {{ f }}
-                </div>
-                {% endfor %}
-                <div class="checkbox mb-3"></div>
-                <button class="btn btn-primary btn-lg btn-block" type="submit">Отозваться</button>
+              </form>
+            {% else %}
+              <div class="card-body mx-3" style="background-color: #e6e6e6">
+                <p class="h5 mt-3 font-weight-bold text-center">Чтобы откликнуться нужно создать резюме</p>
+                <div class="mt-4 text-center"><a href="{% url 'resume_create' %}">Создать</a></div>
               </div>
-            </form>
+          {% endif %}
           {% else %}
           <div class="card-body mx-3" style="background-color: #e6e6e6">
             <p class="h5 mt-3 font-weight-bold text-center">Вы не авторизованны, поэтому не можете оставить отклик</p>

@@ -1,0 +1,31 @@
+{% extends 'about_company/about_vacancies/VacancyBase.html' %}
+{% block vacancy %}
+<!-- Страница просмотра информации об отклике на вакансию -->
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4 tab-content">
+            <!-- Tab -->
+            <section>
+              <h2 class="h4 pt-2 pb-3">{{ vacancy.title }}</h2>
+              <form enctype="multipart/form-data">
+                <div class="form-group pb-2">
+                  {{ application.written_username }}
+                </div>
+                <div class="form-group pb-2">
+                  {{ application.written_phone }}
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark">Сопроводительное письмо</label> <br>
+                  {{ application.written_cover_letter }}
+                </div>
+                <div class="form-group pb-2">
+                  <a href="{% url 'user_resume' application.user.id %}" class="btn btn-outline-info">Посмотреть резюме</a>
+                  <a href="{% url 'answer' application.id %}" class="btn btn-outline-info">Ответное сообщение</a>
+                </div>
+              </form>
+            </section>
+            <!-- END Tab -->
+          </div>
+        </div>
+      </div>
+{% endblock %}

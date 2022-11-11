@@ -1,11 +1,11 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-
+import datetime
 
 from phonenumber_field.formfields import PhoneNumberField
 
-from JunJob.models import Application, Vacancy, Company, Resume, Profile
+from JunJob.models import Application, Vacancy, Company, Resume, Profile, Answer
 from JunJob.accounts.Choices import SPECIALTY_CHOICES, GRADE, STATUS
 
 
@@ -136,3 +136,13 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', 'last_name', 'first_name')
+
+
+class AnswerForm(forms.ModelForm):
+    answer_text = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control',
+                                                               'rows': 4,
+                                                               'style': 'color:#000;'}))
+
+    class Meta:
+        model = Answer
+        fields = ('answer_text',)

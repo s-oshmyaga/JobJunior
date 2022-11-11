@@ -31,30 +31,49 @@ handler404 = custom_handler404
 handler500 = custom_handler500
 
 urlpatterns = [
+    # Админка
     path('admin/', admin.site.urls),
-    path('', views.main_view, name='main'),  # Главная
-    path('search', views.search_view, name='search'),  # поиск
-    path('vacancies', views.VacanciesListView.as_view(), name='vacancies'),  # Все вакансии
-    path('vacancies/cat/<int:specialty_id>', views.SpecialtyVacanciesView.as_view(), name='specialty'),  # Специальность
-    path('companies/<int:company_id>', views_company.CompanyCard.as_view(), name='companycard'),  # Вакансии компании
-    path('vacancies/<int:vacancy_id>', views.one_vacancy_view, name='onevacancy'),  # Одна вакансия
-    # path('vacancies/<int:vacancy_id>/sent/', Views.sent_an_application_view, name='sent'),   # Отправка заявки
-    # Все о компании
-    # path('mycompany/letsstart/', Views.my_company_lets_start_view, name='lets_start'),
-    path('mycompany/create/', views_company.my_company_create_view, name='create_a_company'),  # Моя компания - создать
-    path('mycompany/', views_company.CompanyCreateView.as_view(), name='my_company_form'),  # Моя компания создание
-    path('mycompany/edit', views_company.my_company_edit_view, name='my_company_edit'),  # Редактирование
-    # информации о компании
-    path('mycompany/delete', views_company.delete_company_view, name='delete_company'),  # Удаление компании
+    # Главная
+    path('', views.main_view, name='main'),
+    # поиск
+    path('search', views.search_view, name='search'),
+    # Все вакансии
+    path('vacancies', views.VacanciesListView.as_view(), name='vacancies'),
+    # Специальность
+    path('vacancies/cat/<int:specialty_id>', views.SpecialtyVacanciesView.as_view(), name='specialty'),
+    # Вакансии компании
+    path('companies/<int:company_id>', views_company.CompanyCard.as_view(), name='companycard'),
+    # Одна вакансия
+    path('vacancies/<int:vacancy_id>', views.one_vacancy_view, name='onevacancy'),
 
-    path('mycompany/vacancies/', views_vacancies.UsersVacancies.as_view(), name='my_vacancies'),  # Мои вакансии
-    path('mycompany/vacancies/create/', views_vacancies.my_vacancy_create_view, name='create_a_vacancy'),   # Создание
-    # вакансии
+    # Все о компании
+    # Моя компания - создать
+    path('mycompany/create/', views_company.my_company_create_view, name='create_a_company'),
+    # Моя компания создание
+    path('mycompany/', views_company.CompanyCreateView.as_view(), name='my_company_form'),
+    # Редактирование
+    path('mycompany/edit', views_company.my_company_edit_view, name='my_company_edit'),
+
+    # информации о компании
+    # Удаление компании
+    path('mycompany/delete', views_company.delete_company_view, name='delete_company'),
+    # Мои вакансии
+    path('mycompany/vacancies/', views_vacancies.UsersVacancies.as_view(), name='my_vacancies'),
+    # Создание вакансии
+    path('mycompany/vacancies/create/', views_vacancies.UsersVacancyCreate.as_view(), name='create_a_vacancy'),
     # Редактирование вакансии (заполненная форма)
     path('mycompany/vacancies/<int:vacancy_id>/edit', views_vacancies.my_vacancy_edit_view, name='my_vacancy_edit'),
-    path('mycompany/vacancies/<int:vacancy_id>', views_vacancies.my_vacancy_view, name='my_vacancy_view'),  # просмотр
-    # вакансии
-    path('mycompany/vacancies/<int:vacancy_id>/delete', views_vacancies.my_vacancy_delete_view, name='my_vacancy_delete'),
+    # просмотр вакансии
+    path('mycompany/vacancies/<int:vacancy_id>', views_vacancies.my_vacancy_view, name='my_vacancy_view'),
+    path('mycompany/vacancies/<int:vacancy_id>/delete', views_vacancies.my_vacancy_delete_view,
+         name='my_vacancy_delete'),
+    # отклик на вакансию
+    path('mycompany/vacancies/application/<int:application_id>', views_vacancies.application_view, name='application'),
+    # резюме откликнувшегося
+    path('mycompany/vacancies/application/resume/<int:user_id>', views_vacancies.application_resume_view,
+         name='user_resume'),
+    # написание ответа на отклик
+    path('mycompany/vacancies/answer/<int:application_id>', views_company.AnswerView.as_view(), name='answer'),
 
     # аутентификация
     path('login', views.LoginUser.as_view(), name='login'),

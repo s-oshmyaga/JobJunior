@@ -1,3 +1,8 @@
+"""
+Представления компании пользователя, приглашения на собеседование
+"""
+
+from datetime import date
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -5,7 +10,7 @@ from django.views.generic import ListView, FormView
 from django.urls import reverse, reverse_lazy
 
 from JunJob import models
-from JunJob.accounts.forms import MyCompanyForm
+from JunJob.accounts.forms import MyCompanyForm, AnswerForm
 
 
 class CompanyCard(ListView):  # список вакансий компании
@@ -70,3 +75,28 @@ def delete_company_view(request):  # удаление компании
     except:
         messages.error(request, 'Не удалось удалить компанию')
         return HttpResponseRedirect(reverse('my_company_edit'))
+
+
+class AnswerView(FormView):  # представление написания приглашения на собеседование
+    template_name = 'about_company/about_vacancies/answer.html'
+    # success_url = reverse_lazy('main')
+    form_class = AnswerForm
+
+    def form_valid(self, form):
+        application = models.Application.objects.get(id=self.kwargs['application_id'])
+        application.is_viewed = True
+        answer_form = form.save(commit=False)
+        answer_form.application = application
+        answer_form.date = date.today()
+        answer_form.save()
+        application.save()
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, 'Ошибка заполнения формы')
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def get_success_url(self):
+        application = models.Application.objects.get(id=self.kwargs['application_id'])
+        vacancy_id = application.vacancy.id
+        return reverse('my_vacancy_view', kwargs={'vacancy_id': vacancy_id})

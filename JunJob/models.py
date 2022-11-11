@@ -41,6 +41,7 @@ class Application(models.Model):
     written_phone = PhoneNumberField(unique=True, null=False, blank=False)
     written_cover_letter = models.TextField()
     vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
+    is_viewed = models.BooleanField(blank=True, default=False)
     user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE, null=True)
 
 
@@ -73,3 +74,9 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+class Answer(models.Model):  # модель ответа работодателя на отклик
+    application = models.ForeignKey(Application, on_delete=models.CASCADE, related_name='answer')
+    answer_text = models.TextField()
+    date = models.DateField()

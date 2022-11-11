@@ -1,5 +1,10 @@
+"""
+Представления общих страниц пользователей
+"""
+
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.http import HttpResponseNotFound, HttpResponseServerError
 from django.shortcuts import render
@@ -67,9 +72,16 @@ class SpecialtyVacanciesView(ListView):  # вакансии по специал�
 def one_vacancy_view(request, vacancy_id):  # страница с информацией о вакансии
     vacancy = models.Vacancy.objects.get(id=vacancy_id)
     form = ApplicationForm
+    can_answer = True
+    try:
+        if request.user.resume:
+            can_answer = True
+    except ObjectDoesNotExist:
+        can_answer = False
     context = {
         'vacancy': vacancy,
-        'form': form
+        'form': form,
+        'can_answer': can_answer,
     }
 
     if request.method == "POST":   # отклик на вакансию

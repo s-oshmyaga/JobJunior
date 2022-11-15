@@ -18,7 +18,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from django.urls import path
-
+from django.views.generic import TemplateView
 
 from JunJob.Views import views, views_user, views_company, views_vacancies
 
@@ -34,9 +34,9 @@ urlpatterns = [
     # Админка
     path('admin/', admin.site.urls),
     # Главная
-    path('', views.main_view, name='main'),
+    path('', views.Main.as_view(), name='main'),
     # поиск
-    path('search', views.search_view, name='search'),
+    path('search', views.Search.as_view(), name='search'),
     # Все вакансии
     path('vacancies', views.VacanciesListView.as_view(), name='vacancies'),
     # Специальность
@@ -44,11 +44,14 @@ urlpatterns = [
     # Вакансии компании
     path('companies/<int:company_id>', views_company.CompanyCard.as_view(), name='companycard'),
     # Одна вакансия
-    path('vacancies/<int:vacancy_id>', views.one_vacancy_view, name='onevacancy'),
+    path('vacancies/<int:vacancy_id>', views.VacancyView.as_view(), name='onevacancy'),
+    # Подтверждение отправления
+    path('vacancies/sent', TemplateView.as_view(template_name='common/sent.html'), name='sent'),
 
     # Все о компании
-    # Моя компания - создать
-    path('mycompany/create/', views_company.my_company_create_view, name='create_a_company'),
+    # Моя компания - предложение создать
+    path('mycompany/create/', TemplateView.as_view(template_name='about_company/CreateCompany.html'),
+         name='create_a_company'),
     # Моя компания создание
     path('mycompany/', views_company.CompanyCreateView.as_view(), name='my_company_form'),
     # Редактирование
@@ -64,7 +67,7 @@ urlpatterns = [
     # Редактирование вакансии (заполненная форма)
     path('mycompany/vacancies/<int:vacancy_id>/edit', views_vacancies.my_vacancy_edit_view, name='my_vacancy_edit'),
     # просмотр вакансии
-    path('mycompany/vacancies/<int:vacancy_id>', views_vacancies.my_vacancy_view, name='my_vacancy_view'),
+    path('mycompany/vacancies/<int:pk>', views_vacancies.UserVacancy.as_view(), name='my_vacancy_view'),
     path('mycompany/vacancies/<int:vacancy_id>/delete', views_vacancies.my_vacancy_delete_view,
          name='my_vacancy_delete'),
     # отклик на вакансию

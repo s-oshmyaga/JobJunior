@@ -27,10 +27,6 @@ class CompanyCard(ListView):  # список вакансий компании
         return context
 
 
-def my_company_create_view(request):  # страница предложения создания компании
-    return render(request, 'about_company/CreateCompany.html')
-
-
 class CompanyCreateView(FormView):  # пустая форма создания компании
     template_name = 'about_company/MyCompany.html'
     form_class = MyCompanyForm

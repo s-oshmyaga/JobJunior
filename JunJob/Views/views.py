@@ -1,5 +1,6 @@
 """
-Представления общих страниц пользователей
+Представления общих страниц пользователей (главной страницы, страницы поиска,
+списка вакансий и информации об одной вакансии с возможностью оставить отклик
 """
 
 from django.contrib.auth.views import LoginView
@@ -7,8 +8,8 @@ from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.http import HttpResponseNotFound, HttpResponseServerError
-from django.shortcuts import render
-from django.views.generic import CreateView, ListView
+from django.urls import reverse_lazy
+from django.views.generic import CreateView, ListView, FormView
 
 from JunJob import models
 from JunJob import func
@@ -17,32 +18,33 @@ from JunJob.accounts.forms import RegisterUserForm, LoginUserForm, ApplicationFo
 # Views
 
 
-def main_view(request):  # главная страница
-    specialty_list = models.Specialty.objects.all()
-    company_list = models.Company.objects.all()
-    context = {
-        'specialty_list': specialty_list,
-        'company_list': company_list,
-        }
-    if request.GET.get('q'):
-        search = request.GET.get('q')
-        return search_view(request, query=search)
-    return render(request, 'common/main.html', context=context)
+class Main(ListView):
+    # главная страница
+    template_name = 'common/main.html'
+    context_object_name = 'specialty_list'
+    model = models.Specialty
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(Main, self).get_context_data()
+        context['company_list'] = models.Company.objects.all()
+        return context
 
 
-def search_view(request, query=None):  # поиск
-    if query:
+class Search(ListView):
+    # поиск
+    template_name = 'common/search.html'
+    model = models.Vacancy
+    context_object_name = 'search_result'
+
+    def get_queryset(self):
+        query = self.request.GET.get('q')
         search_result = func.request_to_bd(query)
-        return render(request, 'common/search.html', {'search_result': search_result,
-                                                      'query': query})
+        return search_result
 
-    if request.GET.get('q'):
-        search_vacancy = request.GET.get('q')
-        search_result = func.request_to_bd(search_vacancy)
-        return render(request, 'common/search.html', {'search_result': search_result,
-                                                      'query': search_vacancy})
-
-    return render(request, 'common/search.html')
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super(Search, self).get_context_data()
+        context['query'] = self.request.GET.get('q')
+        return context
 
 
 class VacanciesListView(ListView):  # список вакансий
@@ -69,39 +71,37 @@ class SpecialtyVacanciesView(ListView):  # вакансии по специал�
         return context
 
 
-def one_vacancy_view(request, vacancy_id):  # страница с информацией о вакансии
-    vacancy = models.Vacancy.objects.get(id=vacancy_id)
-    form = ApplicationForm
-    can_answer = True
-    try:
-        if request.user.resume:
-            can_answer = True
-    except ObjectDoesNotExist:
-        can_answer = False
-    context = {
-        'vacancy': vacancy,
-        'form': form,
-        'can_answer': can_answer,
-    }
+class VacancyView(FormView):
+    # просмотр информации о вакансии и возможность оставить отклик
+    template_name = 'common/Vacancy.html'
+    form_class = ApplicationForm
+    success_url = reverse_lazy('sent')
 
-    if request.method == "POST":   # отклик на вакансию
-        form = ApplicationForm(request.POST)
-        if form.is_valid():  # Проверка валидности формы
-            try:   # Если валидна добавляем пользователя и вакансию в форму
-                application_form = form.save(commit=False)
-                application_form.user = request.user
-                application_form.vacancy = vacancy
-                application_form.save()
-                return render(request, 'common/sent.html', {'vacancy_id': vacancy.id})
-            except DatabaseError:
-                messages.error(request, 'Ошибка добавления отклика')
-                return render(request, 'common/Vacancy.html', context=context)
+    def get_context_data(self, **kwargs):
+        # если у пользователя есть резюме, can_answer выведет возможность откликнуться на вакансию
+        context = super(VacancyView, self).get_context_data()
+        try:
+            if self.request.user.resume:
+                can_answer = True
+        except ObjectDoesNotExist:
+            can_answer = False
+        context['can_answer'] = can_answer
+        context['vacancy'] = models.Vacancy.objects.get(id=self.kwargs['vacancy_id'])
+        return context
 
-        else:
-            messages.error(request, 'Форма не валидна')
-            return render(request, 'common/Vacancy.html', context=context)
+    def form_valid(self, form):
+        application_form = form.save(commit=False)
+        application_form.user = self.request.user
+        application_form.vacancy = models.Vacancy.objects.get(id=self.kwargs['vacancy_id'])
+        try:
+            application_form.save()
+        except DatabaseError:
+            messages.error(self.request, 'Ошибка добавления отклика')
+        return super().form_valid(form)
 
-    return render(request, 'common/Vacancy.html', context=context)
+    def form_invalid(self, form):
+        messages.error(self.request, 'Форма не валидна')
+        return self.render_to_response(self.get_context_data(form=form))
 
 
 # authentication

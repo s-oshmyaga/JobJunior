@@ -3,21 +3,19 @@
 """
 
 
-from datetime import date, datetime
-
+from datetime import date
 from django.db.models import Q
-from django.utils.timezone import now
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import ListView, FormView
+from django.views.generic import ListView, FormView, DetailView
 from django.urls import reverse, reverse_lazy
 
 from JunJob import models
 from JunJob.accounts.forms import MyVacancyForm, ResumeForm
 
 
-class UsersVacancies(ListView):  # Мои вакансии (список)
+class UsersVacancies(ListView):  # Вакансии пользователя (список)
     template_name = 'about_company/about_vacancies/VacanciesList.html'
     context_object_name = 'vacancies_list'
 
@@ -57,7 +55,7 @@ def my_vacancy_edit_view(request, vacancy_id):  # моя вакансия ред
             vacancy_form.published_at = date.today()
             try:
                 vacancy_form.save()
-                return HttpResponseRedirect(reverse('my_vacancies'))
+                return HttpResponseRedirect(reverse('my_vacancy_view'))
             except:
                 messages.error(request, 'Ошибка создания вакансии')
                 return render(request, 'about_company/about_vacancies/MyVacancyEdit.html', {'form': form,
@@ -72,30 +70,17 @@ def my_vacancy_edit_view(request, vacancy_id):  # моя вакансия ред
                                                                                     'vacancy': vacancy})
 
 
-def my_vacancy_view(request, vacancy_id):  # страница просмотра информации о вакансии
-    vacancy = models.Vacancy.objects.get(id=vacancy_id)
-    form = MyVacancyForm(instance=vacancy)
-    applications = models.Application.objects.filter(Q(vacancy=vacancy) & Q(is_viewed=False))
-    return render(request, 'about_company/about_vacancies/MyVacancy.html', {'form': form,
-                                                                            'vacancy': vacancy,
-                                                                            'applications': applications})
+class UserVacancy(DetailView):  # страница просмотра информации о вакансии
+    # если есть отклики, на которые еще не ответили, они тоже выводятся
+    model = models.Vacancy
+    context_object_name = 'vacancy'
+    template_name = 'about_company/about_vacancies/MyVacancy.html'
 
-
-# class UserVacancy(FormView):  # страница просмотра информации о вакансии
-#     form_class = MyVacancyForm
-#     template_name = 'about_company/about_vacancies/MyVacancy.html'
-#
-#     def get_initial(self):
-#         initial = super().get_initial()
-#         initial = models.Vacancy.objects.get(id=self.kwargs['vacancy_id'])
-#         return initial
-#
-#     def get_context_data(self, **kwargs):
-#         context = super(UserVacancy, self).get_context_data()
-#         vacancy = models.Vacancy.objects.get(id=self.kwargs['vacancy_id'])
-#         context['vacancy'] = vacancy
-#         context['applications'] = models.Application.objects.filter(vacancy=vacancy)
-#         return context
+    def get_context_data(self, **kwargs):
+        context = super(UserVacancy, self).get_context_data()
+        vacancy = models.Vacancy.objects.get(id=self.kwargs['pk'])
+        context['applications'] = models.Application.objects.filter(Q(vacancy=vacancy) & Q(is_viewed=False))
+        return context
 
 
 def my_vacancy_delete_view(request, vacancy_id):  # удаление вакансии

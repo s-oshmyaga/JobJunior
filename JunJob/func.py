@@ -1,3 +1,7 @@
+"""
+Функции для обработки запроса поиска
+"""
+
 from django.db.models import Q
 from JunJob import models
 

@@ -8,7 +8,8 @@ from django.db import IntegrityError, DatabaseError
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.views.generic import DetailView, FormView, UpdateView
 
 from JunJob import models
 from JunJob.accounts.forms import ResumeForm, ProfileForm, UserForm
@@ -55,17 +56,10 @@ def profile_edit(request):  # изменение профиля
                                                           'form_user': form_user})
 
 
-def resume_create_view(request):  # страница предложения создания резюме
-    return render(request, 'accounts/resume_create.html')
-
-
-def resume_edit_view(request):  # страница создания и редактирования резюме
-    try:
-        user_resume = models.Resume.objects.get(user=request.user)
-    except ObjectDoesNotExist:
-        user_resume = None
+def resume_create_form_view(request):  # страница создания резюме
+    form = ResumeForm
     if request.method == 'POST':
-        form = ResumeForm(request.POST, instance=user_resume)
+        form = ResumeForm(request.POST)
         if form.is_valid():
             resume_form = form.save(commit=False)
             resume_form.user = request.user
@@ -74,21 +68,27 @@ def resume_edit_view(request):  # страница создания и реда�
                 return HttpResponseRedirect(reverse('resume'))
             except IntegrityError:
                 messages.error(request, 'У вас уже есть резюме')
-                return render(request, 'accounts/resume_edit.html', {'form': form})
+                return render(request, 'accounts/resume_create_form.html', {'form': form})
             except DatabaseError:
                 messages.error(request, 'Ошибка создания резюме')
-                return render(request, 'accounts/resume_edit.html', {'form': form})
+                return render(request, 'accounts/resume_create_form.html', {'form': form})
         else:
             messages.error(request, 'Ошибка в заполнении формы')
-            return render(request, 'accounts/resume_edit.html', {'form': form})
-    form = ResumeForm(instance=user_resume)
-    return render(request, 'accounts/resume_edit.html', {'form': form})
+            return render(request, 'accounts/resume_create_form.html', {'form': form})
+    return render(request, 'accounts/resume_create_form.html', {'form': form})
 
 
 def resume_view(request):  # страница готового резюме
     resume_user = request.user.resume
     form = ResumeForm(instance=resume_user)
     return render(request, 'accounts/resume.html', {'form': form})
+
+
+class ResumeEdit(UpdateView):  # редактирование резюме
+    template_name = 'accounts/resume_edit.html'
+    success_url = reverse_lazy('resume')
+    model = models.Resume
+    form_class = ResumeForm
 
 
 def resume_delete_view(request):  # удаление резюме

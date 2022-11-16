@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+<{% extends 'base.html' %}
 {% block container %}
 <main class="container mt-3 pb-5">
   <div class="navbar mt-1">
@@ -7,7 +7,16 @@
     <section class="col-12 col-lg-6 offset-lg-3 mt-5 card">
       <div class="card-body px-3 pb-4">
         <h1 class="h4 pt-2 pb-3">Мое резюме</h1>
-        <form action="{% url 'resume_edit' request.user.resume.id %}" enctype="multipart/form-data">
+        <p class="alert alert-info" role="alert">Создание резюме</p>
+        {% if messages %}  <!-- сообщения об ошибках -->
+                {% for message in messages %}
+                 <div class="message {{ message.tags }}" style="color: red;" align="right">
+                  {{ message }}
+                 </div>
+                {% endfor %}
+        {% endif %}
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
           <div class="row">
             <div class="col-12 col-md-6">
               <div class="form-group pb-2">
@@ -63,10 +72,7 @@
             {{ form.portfolio }}
           </div>
           <div class="form-group">
-            <input type="submit" class="btn btn-info" value="Изменить">
-          </div>
-          <div class="form-group">
-            <a class="btn btn-danger" href="{% url 'resume_delete' %}">Удалить</a>
+            <input type="submit" class="btn btn-info" value="Создать">
           </div>
         </form>
 

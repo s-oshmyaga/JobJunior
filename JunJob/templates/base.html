@@ -41,7 +41,7 @@
                 <a href="{% url 'resume_create' %}" class="dropdown-item py-2">Резюме</a>
                 {% endif %}
                 {% if request.user.company %}
-                <a href="{% url 'my_company_edit' %}" class="dropdown-item py-2">Компания</a>
+                <a href="{% url 'user_company' request.user.company.id %}" class="dropdown-item py-2">Компания</a>
                 {% else %}
                 <a href="{% url 'create_a_company' %}" class="dropdown-item py-2">Компания</a>
                 {% endif %}

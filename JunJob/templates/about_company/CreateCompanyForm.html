@@ -1,0 +1,87 @@
+<!-- информация о компании пользователя -->
+{% extends 'base.html' %}
+{% block container %}
+  <main class="container mt-3 pb-5">
+      <div class="navbar mt-5">
+          <p><a href="javascript:history.back()">Назад</a></p>
+      </div>
+    <div class="row mt-5">
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4">
+            <!-- Tab -->
+            <section class="tab-pane fade show active">
+              <h2 class="h4 pt-2 pb-3">Создание&nbsp;компании</h2>
+
+                {% if messages %}
+                {% for message in messages %}
+                 <div class="message {{ message.tags }}" style="color: red;" align="right">
+                  {{ message }}
+                 </div>
+                {% endfor %}
+                {% endif %}
+
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark">{{ form.name.label }}</label>
+                      {{ form.name }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group">
+                      <label class="mb-2 text-dark">{{ form.logo.label }}</label>
+                      <div class="row align-items-center">
+<!--                        <div class="col-6">-->
+<!--                          <img src="{{ form.logo.initial }}" alt="" style="max-width: 120px;height: auto;">-->
+<!--                        </div>-->
+                        <div class="col-6" style="position: relative;">
+<!--                          <div class="input-group-prepend" style="position: absolute; top: 0;right: 15px;">-->
+<!--                            <span class="btn btn-info px-4">Загрузить</span>-->
+<!--                          </div>-->
+                          <div class="custom-file" style="">
+                            {{ form.logo }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" >
+                        {{ form.employee_count.label }}</label>
+                      {{ form.employee_count }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark">{{ form.location.label }}</label>
+                      {{ form.location }}
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark">{{ form.description.label }}</label>
+                  {{ form.description }}
+                </div>
+                  <div class="form-group">
+                      <input type="submit" class="btn btn-info" value="Сохранить">
+                  </div>
+                  <div class="form-group">
+                      {% if request.user.company %}
+                      <a class="btn btn-danger" href="{% url 'delete_company' %}">Удалить компанию</a>
+                      {% endif %}
+                  </div>
+              </form>
+            </section>
+            <!-- END Tab -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

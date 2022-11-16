@@ -4,11 +4,12 @@
 
 
 from datetime import date
+from django.db import DatabaseError
 from django.db.models import Q
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import ListView, FormView, DetailView
+from django.views.generic import ListView, FormView, DetailView, UpdateView
 from django.urls import reverse, reverse_lazy
 
 from JunJob import models
@@ -43,33 +44,6 @@ class UsersVacancyCreate(FormView):  # Вакансия пользователя
         return self.render_to_response(self.get_context_data(form=form))
 
 
-def my_vacancy_edit_view(request, vacancy_id):  # моя вакансия редактирование
-    vacancy = models.Vacancy.objects.get(id=vacancy_id)
-    if request.method == 'POST':
-        form = MyVacancyForm(request.POST, instance=vacancy)
-        if form.is_valid():
-            vacancy_form = form.save(commit=False)
-            id_specialty = int(request.POST.get('specialty'))
-            vacancy_form.specialty = models.Specialty.objects.get(id=id_specialty)
-            vacancy_form.company = request.user.company
-            vacancy_form.published_at = date.today()
-            try:
-                vacancy_form.save()
-                return HttpResponseRedirect(reverse('my_vacancy_view'))
-            except:
-                messages.error(request, 'Ошибка создания вакансии')
-                return render(request, 'about_company/about_vacancies/MyVacancyEdit.html', {'form': form,
-                                                                                            'vacancy': vacancy})
-        else:
-            messages.error(request, 'Форма не валидна')
-            return render(request, 'about_company/about_vacancies/MyVacancyEdit.html', {'form': form,
-                                                                                        'vacancy': vacancy})
-    else:
-        form = MyVacancyForm(instance=vacancy)
-        return render(request, 'about_company/about_vacancies/MyVacancyEdit.html', {'form': form,
-                                                                                    'vacancy': vacancy})
-
-
 class UserVacancy(DetailView):  # страница просмотра информации о вакансии
     # если есть отклики, на которые еще не ответили, они тоже выводятся
     model = models.Vacancy
@@ -83,21 +57,44 @@ class UserVacancy(DetailView):  # страница просмотра инфор
         return context
 
 
+# редактирование вакансии
+class VacancyEdit(UpdateView):
+    template_name = 'about_company/about_vacancies/VacancyEdit.html'
+    model = models.Vacancy
+    form_class = MyVacancyForm
+
+    def form_valid(self, form):
+        vacancy_form = form.save(commit=False)
+        id_specialty = int(self.request.POST.get('specialty'))
+        vacancy_form.specialty = models.Specialty.objects.get(id=id_specialty)
+        vacancy_form.company = self.request.user.company
+        vacancy_form.published_at = date.today()
+        vacancy_form.save()
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy('my_vacancy_view', kwargs={'pk': self.kwargs['pk']})
+
+
 def my_vacancy_delete_view(request, vacancy_id):  # удаление вакансии
     vacancy_for_delete = models.Vacancy.objects.get(id=vacancy_id)
     try:
         vacancy_for_delete.delete()
         return HttpResponseRedirect(reverse('my_vacancies'))
-    except:
+    except DatabaseError:
         messages.error(request, 'Не удалось удалить вакансию')
         return HttpResponseRedirect(reverse('my_vacancies'))
 
 
-def application_view(request, application_id):  # просмотр отклика
-    application = models.Application.objects.get(id=application_id)
-    vacancy = application.vacancy
-    return render(request, 'about_company/about_vacancies/Application.html', {'application': application,
-                                                                              'vacancy': vacancy})
+class Application(DetailView):
+    model = models.Application
+    template_name = 'about_company/about_vacancies/Application.html'
+    context_object_name = 'application'
+
+    def get_context_data(self, **kwargs):
+        context = super(Application, self).get_context_data()
+        context['vacancy'] = models.Vacancy.objects.get(applications__id=self.kwargs['pk'])
+        return context
 
 
 def application_resume_view(request, user_id):  # просмотр резюме откликнувшегося
@@ -105,4 +102,3 @@ def application_resume_view(request, user_id):  # просмотр резюме 
     resume = models.Resume.objects.get(user=user)
     form = ResumeForm(instance=resume)
     return render(request, 'about_company/about_vacancies/Application-resume.html', {'form': form})
-

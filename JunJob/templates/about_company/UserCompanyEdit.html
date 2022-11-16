@@ -21,20 +21,32 @@
             <!-- Tab -->
             <section class="tab-pane fade show active">
               <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
-              <form enctype="multipart/form-data">
-                   <div class="row">
+
+                {% if messages %}
+                {% for message in messages %}
+                 <div class="message {{ message.tags }}" style="color: red;" align="right">
+                  {{ message }}
+                 </div>
+                {% endfor %}
+                {% endif %}
+
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2 text-dark">Название компании</label>
-                      <input class="form-control" type="text" value="{{ company.name }}">
+                      <label class="mb-2 text-dark">{{ form.name.label }}</label>
+                      {{ form.name }}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group">
-                      <label class="mb-2 text-dark">Логотип</label>
+                      <label class="mb-2 text-dark">{{ form.logo.label }}</label>
                       <div class="row align-items-center">
-                        <div class="col-6">
-                          <img src="{{ company.logo.url }}" alt="" style="max-width: 120px;height: auto;">
+                        <div class="col-6" style="position: relative;">
+                          <div class="custom-file" style="">
+                            {{ form.logo }}
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -43,27 +55,24 @@
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2 text-dark">Количество человек в компании</label>
-                      <input class="form-control" type="text" value="{{ company.employee_count }}">
+                      <label class="mb-2 text-dark" >
+                        {{ form.employee_count.label }}</label>
+                      {{ form.employee_count }}
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2 text-dark">География</label>
-                      <input class="form-control" type="text" value="{{ company.location }}">
+                      <label class="mb-2 text-dark">{{ form.location.label }}</label>
+                      {{ form.location }}
                     </div>
                   </div>
                 </div>
                 <div class="form-group pb-2">
-                  <label class="mb-2 text-dark" for="companyInfo">Информация о&nbsp;компании</label>
-                  <textarea class="form-control" rows="4" id="companyInfo"
-                            style="color:#000;">{{ company.description }}</textarea>
+                  <label class="mb-2 text-dark">{{ form.description.label }}</label>
+                  {{ form.description }}
                 </div>
                   <div class="form-group">
-                      <a class="btn btn-info" href="{% url 'my_company_edit' company.id %}">Изменить</a>
-                  </div>
-                  <div class="form-group">
-                      <a class="btn btn-danger" href="{% url 'delete_company' %}">Удалить компанию</a>
+                      <input type="submit" class="btn btn-info" value="Сохранить">
                   </div>
               </form>
             </section>

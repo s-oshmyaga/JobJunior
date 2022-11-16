@@ -50,12 +50,14 @@ urlpatterns = [
 
     # Все о компании
     # Моя компания - предложение создать
-    path('mycompany/create/', TemplateView.as_view(template_name='about_company/CreateCompany.html'),
+    path('user/company/create/', TemplateView.as_view(template_name='about_company/CreateCompany.html'),
          name='create_a_company'),
     # Моя компания создание
-    path('mycompany/', views_company.CompanyCreateView.as_view(), name='my_company_form'),
+    path('user/company/form', views_company.CompanyCreateView.as_view(), name='my_company_form'),
+    # Просмотр информации
+    path('user/company/<int:pk>', views_company.UserCompany.as_view(), name='user_company'),
     # Редактирование
-    path('mycompany/edit', views_company.my_company_edit_view, name='my_company_edit'),
+    path('user/company/edit/<int:pk>', views_company.CompanyEdit.as_view(), name='my_company_edit'),
 
     # информации о компании
     # Удаление компании
@@ -64,14 +66,15 @@ urlpatterns = [
     path('mycompany/vacancies/', views_vacancies.UsersVacancies.as_view(), name='my_vacancies'),
     # Создание вакансии
     path('mycompany/vacancies/create/', views_vacancies.UsersVacancyCreate.as_view(), name='create_a_vacancy'),
-    # Редактирование вакансии (заполненная форма)
-    path('mycompany/vacancies/<int:vacancy_id>/edit', views_vacancies.my_vacancy_edit_view, name='my_vacancy_edit'),
+    # Редактирование вакансии
+    path('mycompany/vacancies/<int:pk>/edit', views_vacancies.VacancyEdit.as_view(), name='my_vacancy_edit'),
     # просмотр вакансии
     path('mycompany/vacancies/<int:pk>', views_vacancies.UserVacancy.as_view(), name='my_vacancy_view'),
     path('mycompany/vacancies/<int:vacancy_id>/delete', views_vacancies.my_vacancy_delete_view,
          name='my_vacancy_delete'),
     # отклик на вакансию
-    path('mycompany/vacancies/application/<int:application_id>', views_vacancies.application_view, name='application'),
+    path('mycompany/vacancies/application/<int:pk>', views_vacancies.Application.as_view(),
+         name='application'),
     # резюме откликнувшегося
     path('mycompany/vacancies/application/resume/<int:user_id>', views_vacancies.application_resume_view,
          name='user_resume'),
@@ -86,9 +89,12 @@ urlpatterns = [
     # about user
     path('profile', views_user.profile_view, name='profile'),
     path('profile/edit', views_user.profile_edit, name='profile_edit'),
-    path('resume/create', views_user.resume_create_view, name='resume_create'),
-    path('resume/edit', views_user.resume_edit_view, name='resume_edit'),
-    path('resume', views_user.resume_view, name='resume'),
+    # страница предложения создания резюме
+    path('resume/create', TemplateView.as_view(template_name='accounts/resume_create.html'), name='resume_create'),
+    # страница создания резюме
+    path('resume/create/form', views_user.resume_create_form_view, name='resume_create_form'),
+    path('resume/edit/<int:pk>', views_user.ResumeEdit.as_view(), name='resume_edit'),
+    path('resume/', views_user.resume_view, name='resume'),
     path('resume/delete', views_user.resume_delete_view, name='resume_delete')
 
 ]

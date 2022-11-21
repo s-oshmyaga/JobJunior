@@ -2,12 +2,13 @@
 Представления общих страниц пользователей (главной страницы, страницы поиска,
 списка вакансий и информации об одной вакансии с возможностью оставить отклик
 """
-
+from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
 from django.http import HttpResponseNotFound, HttpResponseServerError
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, FormView
 
@@ -26,7 +27,8 @@ class Main(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(Main, self).get_context_data()
-        context['company_list'] = models.Company.objects.all()
+        # выводятся только первые 8 компаний
+        context['company_list'] = models.Company.objects.all()[:8]
         return context
 
 
@@ -51,6 +53,7 @@ class VacanciesListView(ListView):  # список вакансий
     model = models.Vacancy
     template_name = 'common/Vacancies.html'
     context_object_name = 'vacancies_list'
+    paginate_by = 5
 
     def get_queryset(self):
         return models.Vacancy.objects.order_by('-published_at')
@@ -79,11 +82,14 @@ class VacancyView(FormView):
 
     def get_context_data(self, **kwargs):
         # если у пользователя есть резюме, can_answer выведет возможность откликнуться на вакансию
-        context = super(VacancyView, self).get_context_data()
+        context = super().get_context_data()
+        can_answer = False
         try:
             if self.request.user.resume:
                 can_answer = True
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist:  # если у пользователя нет резюме
+            can_answer = False
+        except AttributeError:  # если пользователь не авторизован
             can_answer = False
         context['can_answer'] = can_answer
         context['vacancy'] = models.Vacancy.objects.get(id=self.kwargs['vacancy_id'])
@@ -111,11 +117,21 @@ class LoginUser(LoginView):
     template_name = 'accounts/login.html'
     redirect_authenticated_user = True
 
+    def form_invalid(self, form):
+        messages.error(self.request, 'Неверный логин или пароль')
+        return self.render_to_response(self.get_context_data(form=form))
+
 
 class Register(CreateView):
     template_name = 'accounts/Register.html'
     form_class = RegisterUserForm
     success_url = 'login'
+
+    def form_valid(self, form):
+        # автоматический вход при удачной регистрации
+        user = form.save()
+        login(self.request, user)
+        return redirect('main')
 
 
 # хэндлеры

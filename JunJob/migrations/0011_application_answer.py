@@ -19,8 +19,10 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('answer_text', models.TextField()),
                 ('date', models.DateField()),
-                ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answer', to='JunJob.application')),
-                ('vacancy', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answer', to='JunJob.vacancy')),
+                ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answer',
+                                                  to='JunJob.application')),
+                ('vacancy', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='answer',
+                                              to='JunJob.vacancy')),
             ],
         ),
     ]

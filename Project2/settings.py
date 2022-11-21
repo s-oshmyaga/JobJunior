@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'JunJob',
     # for number
     'phonenumber_field',
+    # Djagno Debug Toolbar
+    'debug_toolbar',
     # for delete
     'django_cleanup.apps.CleanupConfig',
 ]
@@ -54,6 +56,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
 ]
 
 ROOT_URLCONF = 'Project2.urls'
@@ -133,6 +140,7 @@ MEDIA_ROOT = 'media'
 
 MEDIA_COMPANY_IMAGE_DIR = 'company_images'
 MEDIA_SPECIALITY_IMAGE_DIR = 'speciality_images'
+MEDIA_AVATAR_IMAGE_DIR = 'avatars'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

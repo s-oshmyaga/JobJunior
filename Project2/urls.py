@@ -17,7 +17,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.urls import path
+from django.urls import path, include
 from django.views.generic import TemplateView
 
 from JunJob.Views import views, views_user, views_company, views_vacancies
@@ -89,10 +89,12 @@ urlpatterns = [
     # about user
     path('profile', views_user.profile_view, name='profile'),
     path('profile/edit', views_user.profile_edit, name='profile_edit'),
+    # удаление профиля
+    path('profile/delete', views_user.user_delete, name='delete_user'),
     # страница предложения создания резюме
     path('resume/create', TemplateView.as_view(template_name='accounts/resume_create.html'), name='resume_create'),
     # страница создания резюме
-    path('resume/create/form', views_user.resume_create_form_view, name='resume_create_form'),
+    path('resume/create/form', views_user.ResumeCreate.as_view(), name='resume_create_form'),
     path('resume/edit/<int:pk>', views_user.ResumeEdit.as_view(), name='resume_edit'),
     path('resume/', views_user.resume_view, name='resume'),
     path('resume/delete', views_user.resume_delete_view, name='resume_delete')
@@ -100,5 +102,9 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)

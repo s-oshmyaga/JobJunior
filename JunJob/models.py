@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -59,10 +60,18 @@ class Resume(models.Model):
 
 
 class Profile(models.Model):
+    def validate_image(fieldfile_obj):  # проверка размера аватара
+        filesize = fieldfile_obj.file.size
+        megabyte_limit = 5.0
+        if filesize > megabyte_limit * 1024 * 1024:
+            raise ValidationError("Максимальный размер файла %sMB" % str(megabyte_limit))
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     birthday = models.DateField(null=True, blank=True)
     country = models.CharField(null=True, blank=True, max_length=100)
     city = models.CharField(null=True, blank=True, max_length=100)
+    avatar = models.ImageField(upload_to=settings.MEDIA_AVATAR_IMAGE_DIR, validators=[validate_image],
+                               default='images/avatar.jpg')
 
 
 @receiver(post_save, sender=User)

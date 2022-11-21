@@ -1,8 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-import datetime
-
+from django.core.exceptions import ValidationError
 from phonenumber_field.formfields import PhoneNumberField
 
 from JunJob.models import Application, Vacancy, Company, Resume, Profile, Answer
@@ -36,8 +35,15 @@ class LoginUserForm(AuthenticationForm):
 
 class ApplicationForm(forms.ModelForm):   # отклик на вакансию
     written_username = forms.CharField(label='Вас зовут', widget=forms.TextInput(attrs={'class': 'form-control'}))
-    written_phone = PhoneNumberField(label='Ваш телефон', widget=forms.TextInput(attrs={'class': 'form-control',
-                                                                                        'name': 'phone_number'}))
+    written_phone = PhoneNumberField(label='Ваш телефон', error_messages={'invalid': 'Вы ввели неверный номер'},
+                                     max_length=12,
+                                     widget=forms.TextInput(
+                                         attrs={
+                                             'class': 'form-control',
+                                             'name': 'phone_number',
+                                             'type': 'tel',
+                                             'placeholder': '+7 (xxx) xxx-xx-xx',
+                                             'pattern': r'\+7[0-9]{10}'}))
     written_cover_letter = forms.CharField(label='Сопроводительное письмо',
                                            widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 8}))
     user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label=None)
@@ -67,7 +73,6 @@ class MyCompanyForm(forms.ModelForm):   # форма редактировани�
     class Meta:
         model = Company
         fields = ('name', 'logo', 'employee_count', 'location', 'description')
-        # widget = {'logo': forms.ImageField(label='Логотип', initial='https://place-hold.it/120x40')}
 
 
 class MyVacancyForm(forms.ModelForm):  # форма редактирования информации о вакансии
@@ -113,16 +118,19 @@ class ResumeForm(forms.ModelForm):  # форма резюме
 
 
 class ProfileForm(forms.ModelForm):
+
     birthday = forms.DateField(required=False, label='Дата рождения',
-                               widget=forms.TextInput(attrs={'class': 'form-control'}))
+                               widget=forms.TextInput(attrs={'class': 'form-control',
+                                                             'placeholder': 'ГГГГ-мм-дд'}))
     country = forms.CharField(required=False, label='Страна',
                               widget=forms.TextInput(attrs={'class': 'form-control'}))
     city = forms.CharField(required=False, label='город',
                            widget=forms.TextInput(attrs={'class': 'form-control'}))
+    avatar = forms.ImageField(label='Фото профиля')
 
     class Meta:
         model = Profile
-        fields = ('birthday', 'country', 'city')
+        fields = ('birthday', 'country', 'city', 'avatar')
 
 
 class UserForm(forms.ModelForm):

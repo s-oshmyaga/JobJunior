@@ -1,0 +1,30 @@
+{% extends 'accounts/profile_base.html' %}
+{% block profile %}
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4">
+            <section class="tab-pane fade show active">
+              <h2 class="h4 pt-2 pb-3">{{ request.user.username }}</h2>
+              {% if messages %}  <!-- сообщения об ошибках -->
+                {% for message in messages %}
+                 <div class="message {{ message.tags }}" style="color: red;" align="right">
+                  {{ message }}
+                 </div>
+                {% endfor %}
+              {% endif %}
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                  <p>Вы уверены, что хотите удалить аккаунт?</p>
+                </div>
+                <div class="form-group">
+                  <input type="submit" class="btn btn-danger" value="Удалить">
+                  <a class="btn btn-info" href="{% url 'main' %}">Вернуться на главную</a>
+                </div>
+              </form>
+            </section>
+          </div>
+        </div>
+      </div>
+
+{% endblock %}

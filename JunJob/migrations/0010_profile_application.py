@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import phonenumber_field.modelfields
 
 
 class Migration(migrations.Migration):
@@ -21,7 +20,8 @@ class Migration(migrations.Migration):
                 ('birthday', models.DateField(blank=True, null=True)),
                 ('country', models.CharField(blank=True, max_length=100, null=True)),
                 ('city', models.CharField(blank=True, max_length=100, null=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='profile', to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE,
+                                              related_name='profile', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

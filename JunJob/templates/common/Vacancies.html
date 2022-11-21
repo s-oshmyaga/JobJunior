@@ -28,6 +28,11 @@
               </div>
             </div>
           {% endfor %}
+          <div class="h3 text-center mx-auto mt-0 pt-1">
+            {% for page in paginator.page_range %}
+            <a href="?page={{ page }}">{{ page }}</a>
+          {% endfor %}
+          </div>
         </div>
       </div>
     </section>

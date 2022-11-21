@@ -3,7 +3,6 @@
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import phonenumber_field.modelfields
 
 
 class Migration(migrations.Migration):
@@ -20,14 +19,23 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=60)),
                 ('surname', models.CharField(max_length=60)),
-                ('grade', models.CharField(choices=[('Young', 'Young'), ('Junior', 'Junior'), ('Middle', 'Middle'), ('Senior', 'Senior'), ('TeamLead', 'Teamlead')], default='Junior', max_length=10)),
-                ('status', models.CharField(choices=[('Не ищу работу', 'Notlooking'), ('Рассматриваю предложения', 'Joboffer'), ('Ищу работу', 'Looking')], default='Ищу работу', max_length=30)),
+                ('grade', models.CharField(choices=[('Young', 'Young'),
+                                                    ('Junior', 'Junior'),
+                                                    ('Middle', 'Middle'),
+                                                    ('Senior', 'Senior'),
+                                                    ('TeamLead', 'Teamlead')],
+                                           default='Junior', max_length=10)),
+                ('status', models.CharField(choices=[('Не ищу работу', 'Notlooking'),
+                                                     ('Рассматриваю предложения', 'Joboffer'),
+                                                     ('Ищу работу', 'Looking')],
+                                            default='Ищу работу', max_length=30)),
                 ('salary', models.FloatField()),
                 ('specialty', models.CharField(max_length=20)),
                 ('education', models.CharField(max_length=100)),
                 ('experience', models.TextField()),
                 ('portfolio', models.CharField(max_length=200)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='resume', to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE,
+                                              related_name='resume', to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

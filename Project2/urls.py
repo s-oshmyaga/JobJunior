@@ -97,7 +97,13 @@ urlpatterns = [
     path('resume/create/form', views_user.ResumeCreate.as_view(), name='resume_create_form'),
     path('resume/edit/<int:pk>', views_user.ResumeEdit.as_view(), name='resume_edit'),
     path('resume/', views_user.resume_view, name='resume'),
-    path('resume/delete', views_user.resume_delete_view, name='resume_delete')
+    path('resume/delete', views_user.resume_delete_view, name='resume_delete'),
+    # просмотр своих откликов
+    path('user/applications', views_user.Applications.as_view(), name='user_applications'),
+    # удаление отклика
+    path('user/application/<int:application_id>/delete', views_user.application_delete, name='application_delete'),
+    # просмотр предложений по откликам
+    path('user/answers', views_user.Answers.as_view(), name='user_answers'),
 
 ]
 

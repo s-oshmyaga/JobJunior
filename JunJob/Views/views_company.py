@@ -90,4 +90,4 @@ class AnswerView(FormView):  # представление написания п�
     def get_success_url(self):
         application = models.Application.objects.get(id=self.kwargs['application_id'])
         vacancy_id = application.vacancy.id
-        return reverse('my_vacancy_view', kwargs={'vacancy_id': vacancy_id})
+        return reverse('my_vacancy_view', kwargs={'pk': vacancy_id})

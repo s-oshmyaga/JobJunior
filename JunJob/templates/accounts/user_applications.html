@@ -1,1 +1,35 @@
 <!-- просмотр откликов пользователя со ссылками на предложения или указанием их отсутствия -->
+{% extends 'base.html' %}
+{% block container %}
+<main class="container mt-3 pb-5">
+  <div class="navbar mt-1">
+      <p><a href="javascript:history.back()">Назад</a></p>
+  </div>
+    <section class="col-12 col-lg-6 offset-lg-3 mt-5 card">
+      <div class="card-body px-3 pb-4">
+        <h1 class="h4 pt-2 pb-3">Мои отклики -  <a href="{% url 'user_answers' %}">посмотреть ответы</a></h1>
+        <form enctype="multipart/form-data">
+            {% if application_list %}
+          {% for application in application_list %}
+              <div class="form-group pb-2" >
+                <b>{{ application.vacancy.title }}</b>
+                <a href="{% url 'onevacancy' application.vacancy.id %}">Посмотреть вакансию</a>
+                <br>
+                <label class="mb-2 text-dark">Сопроводительное письмо</label> <br>
+                {{ application.written_cover_letter }}
+              <br>
+              <a class="btn btn-danger" href="{% url 'application_delete' application.id %}">Удалить</a>
+            </div>
+            {% endfor %}
+
+          {% else %}
+          <div class="card-body px-3 pb-4">
+            <h1 class="h4 pt-2 pb-3">У вас пока нет откликов</h1>
+          {% endif %}
+          </div>
+        </form>
+
+      </div>
+    </section>
+</main>
+{% endblock %}

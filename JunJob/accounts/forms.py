@@ -42,7 +42,7 @@ class ApplicationForm(forms.ModelForm):   # отклик на вакансию
                                              'class': 'form-control',
                                              'name': 'phone_number',
                                              'type': 'tel',
-                                             'placeholder': '+7 (xxx) xxx-xx-xx',
+                                             'placeholder': '+7 (9xx) xxx-xx-xx',
                                              'pattern': r'\+7[0-9]{10}'}))
     written_cover_letter = forms.CharField(label='Сопроводительное письмо',
                                            widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 8}))

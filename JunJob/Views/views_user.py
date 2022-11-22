@@ -10,7 +10,7 @@ from django.db import IntegrityError, DatabaseError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
-from django.views.generic import UpdateView, FormView
+from django.views.generic import UpdateView, FormView, ListView
 
 from JunJob import models
 from JunJob.accounts.forms import ResumeForm, ProfileForm, UserForm
@@ -108,5 +108,23 @@ def resume_delete_view(request):  # удаление резюме
         return HttpResponseRedirect(reverse('resume'))
 
 
-def user_answers_view(request):  # просмотр приглашений пользователя
-    pass
+class Applications(ListView):
+    template_name = 'accounts/user_applications.html'
+    context_object_name = 'application_list'
+
+    def get_queryset(self):
+        return models.Application.objects.filter(user=self.request.user)
+
+
+def application_delete(requset, application_id):
+    application = models.Application.objects.get(id=application_id)
+    application.delete()
+    return HttpResponseRedirect(reverse_lazy('user_applications'))
+
+
+class Answers(ListView):  # просмотр приглашений пользователя
+    template_name = 'accounts/answers.html'
+    context_object_name = 'answers_list'
+
+    def get_queryset(self):
+        return models.Answer.objects.filter(application__user=self.request.user)

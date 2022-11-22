@@ -1,1 +1,32 @@
 <!-- предложение о работе -->
+{% extends 'base.html' %}
+{% block container %}
+<main class="container mt-3 pb-5">
+  <div class="navbar mt-1">
+      <p><a href="javascript:history.back()">Назад</a></p>
+  </div>
+    <section class="col-12 col-lg-6 offset-lg-3 mt-5 card">
+      <div class="card-body px-3 pb-4">
+        <h1 class="h4 pt-2 pb-3">Предложения по откликам</h1>
+        <form enctype="multipart/form-data">
+            {% if answers_list %}
+          {% for answer in answers_list %}
+              <div class="form-group pb-2" >
+                <b>{{ answer.application.vacancy.title }}</b>
+                <a href="{% url 'onevacancy' answer.application.vacancy.id %}">Посмотреть вакансию</a>
+                <br>
+                {{ answer.answer_text }}
+            </div>
+            {% endfor %}
+
+          {% else %}
+          <div class="card-body px-3 pb-4">
+            <h4 style="color: grey">У вас пока нет ответов на отклики</h4>
+          {% endif %}
+          </div>
+        </form>
+
+      </div>
+    </section>
+</main>
+{% endblock %}

@@ -101,4 +101,6 @@ def application_resume_view(request, user_id):  # просмотр резюме 
     user = models.User.objects.get(id=user_id)
     resume = models.Resume.objects.get(user=user)
     form = ResumeForm(instance=resume)
-    return render(request, 'about_company/about_vacancies/Application-resume.html', {'form': form})
+    resume_photo = user.profile.avatar
+    return render(request, 'about_company/about_vacancies/Application-resume.html', {'form': form,
+                                                                                     'avatar': resume_photo})

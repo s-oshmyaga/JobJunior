@@ -14,7 +14,7 @@
             {% else %}
             <a class="nav-link" href="{% url 'resume_create' %}">1. Мое резюме</a>
             {% endif %}
-            <a class="nav-link" href="#">2. Мои отклики</a>
+            <a class="nav-link" href="{% url 'user_applications' %}">2. Мои отклики</a>
             {% if request.user.company %}
             <a class="nav-link" href="{% url 'user_company' request.user.company.id %}">3. Моя компания</a>
             {% else %}

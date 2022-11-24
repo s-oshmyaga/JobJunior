@@ -44,6 +44,10 @@
         </div>
       </div>
       {% endfor %}
+<!--        {% if page_obj.has_next %}-->
+<!--        <a href="?page={{ page_obj.next_page_number }}">Следующая страница</a>-->
+<!--        <a href="?page={{ page_obj.paginator.num_pages }}">Последняя страница</a>-->
+<!--        {% endif %}-->
       {% else %}
       <p class="text-center pt-1">По данному запросу вакансий не найдено</p>
       {% endif %}

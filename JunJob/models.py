@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -36,15 +37,6 @@ class Vacancy(models.Model):
     published_at = models.DateField()
 
 
-class Application(models.Model):
-    written_username = models.CharField(max_length=70)
-    written_phone = PhoneNumberField(unique=True, null=False, blank=False)
-    written_cover_letter = models.TextField()
-    vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
-    is_viewed = models.BooleanField(blank=True, default=False)
-    user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE, null=True)
-
-
 class Resume(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='resume')
     name = models.CharField(max_length=60)
@@ -58,11 +50,29 @@ class Resume(models.Model):
     portfolio = models.CharField(max_length=200)
 
 
+class Application(models.Model):
+    written_username = models.CharField(max_length=70)
+    written_phone = PhoneNumberField(unique=True, null=False, blank=False)
+    written_cover_letter = models.TextField()
+    vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
+    is_viewed = models.BooleanField(blank=True, default=False)
+    user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE, null=True)
+    resume = models.ForeignKey(Resume, related_name='applications', on_delete=models.CASCADE, null=True)
+
+
 class Profile(models.Model):
+    def validate_image(fieldfile_obj):  # проверка размера аватара
+        filesize = fieldfile_obj.file.size
+        megabyte_limit = 5.0
+        if filesize > megabyte_limit * 1024 * 1024:
+            raise ValidationError("Максимальный размер файла %sMB" % str(megabyte_limit))
+
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     birthday = models.DateField(null=True, blank=True)
     country = models.CharField(null=True, blank=True, max_length=100)
     city = models.CharField(null=True, blank=True, max_length=100)
+    avatar = models.ImageField(upload_to=settings.MEDIA_AVATAR_IMAGE_DIR, validators=[validate_image],
+                               default='images/avatar.jpg')
 
 
 @receiver(post_save, sender=User)

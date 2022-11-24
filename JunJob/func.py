@@ -1,3 +1,9 @@
+"""
+Функции для обработки запроса поиска.
+Строка запроса разделяется по символам пробела, удаляются все
+знаки пунктуации. Каждое слово будет учитываться при фильтрации.
+"""
+
 from django.db.models import Q
 from JunJob import models
 
@@ -15,7 +21,6 @@ def request_to_bd(string):
         for i in range(1, len_search_vacancy):
             search_question |= Q(title__icontains=search_vacancy[i]) | \
                               Q(skills__icontains=search_vacancy[i])
-    search_result = models.Vacancy.objects.filter(search_question)
+    search_result = models.Vacancy.objects.filter(search_question).order_by('-published_at')
 
     return search_result
-

@@ -4,10 +4,11 @@
 
 from datetime import date
 from django.contrib import messages
+from django.db import DatabaseError
+from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.views.generic import ListView, FormView
 from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, FormView, DetailView, UpdateView
 
 from JunJob import models
 from JunJob.accounts.forms import MyCompanyForm, AnswerForm
@@ -27,12 +28,8 @@ class CompanyCard(ListView):  # список вакансий компании
         return context
 
 
-def my_company_create_view(request):  # страница предложения создания компании
-    return render(request, 'about_company/CreateCompany.html')
-
-
-class CompanyCreateView(FormView):  # пустая форма создания компании
-    template_name = 'about_company/MyCompany.html'
+class CompanyCreateView(FormView):  # форма создания компании
+    template_name = 'about_company/CreateCompanyForm.html'
     form_class = MyCompanyForm
     success_url = reverse_lazy('my_company_edit')
 
@@ -46,25 +43,21 @@ class CompanyCreateView(FormView):  # пустая форма создания �
         return self.render_to_response(self.get_context_data(form=form))
 
 
-def my_company_edit_view(request):   # просмотр и редактирование формы компании
-    my_company = request.user.company
-    if request.method == 'POST':
-        form = MyCompanyForm(request.POST, request.FILES, instance=my_company)
-        if form.is_valid():
-            company_form = form.save(commit=False)
-            company_form.owner = request.user
-            try:
-                company_form.save()
-                return HttpResponseRedirect(reverse('my_company_edit'))
-            except:
-                messages.error(request, 'Ошибка редактирования компании')
-                return render(request, 'about_company/MyCompany.html', {'form': form})
-        else:
-            messages.error(request, 'Форма не валидна')
-            return render(request, 'about_company/MyCompany.html', {'form': form})
-    else:
-        form = MyCompanyForm(instance=my_company)
-    return render(request, 'about_company/MyCompany.html', {'form': form})
+# просмотр информации о компании
+class UserCompany(DetailView):
+    model = models.Company
+    context_object_name = 'company'
+    template_name = 'about_company/MyCompany.html'
+
+
+# редактирование информации о компании
+class CompanyEdit(UpdateView):
+    model = models.Company
+    form_class = MyCompanyForm
+    template_name = 'about_company/UserCompanyEdit.html'
+
+    def get_success_url(self):
+        return reverse('user_company', kwargs={'pk': self.request.user.company.id})
 
 
 def delete_company_view(request):  # удаление компании
@@ -72,24 +65,25 @@ def delete_company_view(request):  # удаление компании
     try:
         company_for_delete.delete()
         return HttpResponseRedirect(reverse('main'))
-    except:
+    except DatabaseError:
         messages.error(request, 'Не удалось удалить компанию')
         return HttpResponseRedirect(reverse('my_company_edit'))
 
 
 class AnswerView(FormView):  # представление написания приглашения на собеседование
     template_name = 'about_company/about_vacancies/answer.html'
-    # success_url = reverse_lazy('main')
     form_class = AnswerForm
 
     def form_valid(self, form):
-        application = models.Application.objects.get(id=self.kwargs['application_id'])
-        application.is_viewed = True
-        answer_form = form.save(commit=False)
-        answer_form.application = application
-        answer_form.date = date.today()
-        answer_form.save()
-        application.save()
+        with atomic():
+            application = models.Application.objects.get(id=self.kwargs['application_id'])
+            # ответ на отклик отправлен, больше оклик выводить не надо
+            application.is_viewed = True
+            answer_form = form.save(commit=False)
+            answer_form.application = application
+            answer_form.date = date.today()
+            answer_form.save()
+            application.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -99,4 +93,4 @@ class AnswerView(FormView):  # представление написания п�
     def get_success_url(self):
         application = models.Application.objects.get(id=self.kwargs['application_id'])
         vacancy_id = application.vacancy.id
-        return reverse('my_vacancy_view', kwargs={'vacancy_id': vacancy_id})
+        return reverse('my_vacancy_view', kwargs={'pk': vacancy_id})

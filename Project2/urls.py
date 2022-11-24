@@ -17,26 +17,26 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
-from django.urls import path
-
+from django.urls import path, include
+from django.views.generic import TemplateView
 
 from JunJob.Views import views, views_user, views_company, views_vacancies
 
-
-from JunJob.Views.views import custom_handler404
-from JunJob.Views.views import custom_handler500
+from JunJob.Views.views import custom_handler404, custom_handler400, custom_handler403, custom_handler500
 
 
 handler404 = custom_handler404
 handler500 = custom_handler500
+handler400 = custom_handler400
+handler403 = custom_handler403
 
 urlpatterns = [
     # Админка
     path('admin/', admin.site.urls),
     # Главная
-    path('', views.main_view, name='main'),
+    path('', views.Main.as_view(), name='main'),
     # поиск
-    path('search', views.search_view, name='search'),
+    path('search', views.Search.as_view(), name='search'),
     # Все вакансии
     path('vacancies', views.VacanciesListView.as_view(), name='vacancies'),
     # Специальность
@@ -44,15 +44,20 @@ urlpatterns = [
     # Вакансии компании
     path('companies/<int:company_id>', views_company.CompanyCard.as_view(), name='companycard'),
     # Одна вакансия
-    path('vacancies/<int:vacancy_id>', views.one_vacancy_view, name='onevacancy'),
+    path('vacancies/<int:vacancy_id>', views.VacancyView.as_view(), name='onevacancy'),
+    # Подтверждение отправления
+    path('vacancies/sent', TemplateView.as_view(template_name='common/sent.html'), name='sent'),
 
     # Все о компании
-    # Моя компания - создать
-    path('mycompany/create/', views_company.my_company_create_view, name='create_a_company'),
+    # Моя компания - предложение создать
+    path('user/company/create/', TemplateView.as_view(template_name='about_company/CreateCompany.html'),
+         name='create_a_company'),
     # Моя компания создание
-    path('mycompany/', views_company.CompanyCreateView.as_view(), name='my_company_form'),
+    path('user/company/form', views_company.CompanyCreateView.as_view(), name='my_company_form'),
+    # Просмотр информации
+    path('user/company/<int:pk>', views_company.UserCompany.as_view(), name='user_company'),
     # Редактирование
-    path('mycompany/edit', views_company.my_company_edit_view, name='my_company_edit'),
+    path('user/company/edit/<int:pk>', views_company.CompanyEdit.as_view(), name='my_company_edit'),
 
     # информации о компании
     # Удаление компании
@@ -61,16 +66,17 @@ urlpatterns = [
     path('mycompany/vacancies/', views_vacancies.UsersVacancies.as_view(), name='my_vacancies'),
     # Создание вакансии
     path('mycompany/vacancies/create/', views_vacancies.UsersVacancyCreate.as_view(), name='create_a_vacancy'),
-    # Редактирование вакансии (заполненная форма)
-    path('mycompany/vacancies/<int:vacancy_id>/edit', views_vacancies.my_vacancy_edit_view, name='my_vacancy_edit'),
+    # Редактирование вакансии
+    path('mycompany/vacancies/<int:pk>/edit', views_vacancies.VacancyEdit.as_view(), name='my_vacancy_edit'),
     # просмотр вакансии
-    path('mycompany/vacancies/<int:vacancy_id>', views_vacancies.my_vacancy_view, name='my_vacancy_view'),
+    path('mycompany/vacancies/<int:pk>', views_vacancies.UserVacancy.as_view(), name='my_vacancy_view'),
     path('mycompany/vacancies/<int:vacancy_id>/delete', views_vacancies.my_vacancy_delete_view,
          name='my_vacancy_delete'),
     # отклик на вакансию
-    path('mycompany/vacancies/application/<int:application_id>', views_vacancies.application_view, name='application'),
+    path('mycompany/vacancies/application/<int:pk>', views_vacancies.Application.as_view(),
+         name='application'),
     # резюме откликнувшегося
-    path('mycompany/vacancies/application/resume/<int:user_id>', views_vacancies.application_resume_view,
+    path('mycompany/vacancies/application/resume/<int:resume_id>', views_vacancies.application_resume_view,
          name='user_resume'),
     # написание ответа на отклик
     path('mycompany/vacancies/answer/<int:application_id>', views_company.AnswerView.as_view(), name='answer'),
@@ -83,13 +89,32 @@ urlpatterns = [
     # about user
     path('profile', views_user.profile_view, name='profile'),
     path('profile/edit', views_user.profile_edit, name='profile_edit'),
-    path('resume/create', views_user.resume_create_view, name='resume_create'),
-    path('resume/edit', views_user.resume_edit_view, name='resume_edit'),
-    path('resume', views_user.resume_view, name='resume'),
-    path('resume/delete', views_user.resume_delete_view, name='resume_delete')
+    # удаление профиля
+    path('profile/delete', views_user.user_delete, name='delete_user'),
+    # страница предложения создания резюме
+    path('resume/create', TemplateView.as_view(template_name='accounts/resume_create.html'), name='resume_create'),
+    # страница создания резюме
+    path('resume/create/form', views_user.ResumeCreate.as_view(), name='resume_create_form'),
+    path('resume/edit/<int:pk>', views_user.ResumeEdit.as_view(), name='resume_edit'),
+    path('resume/', views_user.resume_view, name='resume'),
+    path('resume/delete', views_user.resume_delete_view, name='resume_delete'),
+    # просмотр своих откликов
+    path('user/applications', views_user.Applications.as_view(), name='user_applications'),
+    # удаление отклика
+    path('user/application/<int:application_id>/delete', views_user.application_delete, name='application_delete'),
+    # просмотр предложений по откликам
+    path('user/answers', views_user.Answers.as_view(), name='user_answers'),
 
 ]
 
 if settings.DEBUG:
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT
+                          )

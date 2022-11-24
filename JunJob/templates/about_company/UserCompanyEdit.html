@@ -1,0 +1,85 @@
+<!-- информация о компании пользователя -->
+{% extends 'base.html' %}
+{% block container %}
+  <main class="container mt-3 pb-5">
+      <div class="navbar mt-5">
+          <p><a href="javascript:history.back()">Назад</a></p>
+      </div>
+    <div class="row mt-5">
+      <div class="col-12 col-lg-4">
+        <aside class="pt-3 pb-4 px-4 mb-5 card">
+          <h1 class="h4 pt-2 pb-2">Моя компания</h1>
+          <div class="nav flex-column nav-pills">
+            <a class="nav-link active" href="{% url 'user_company' request.user.company.id %}">1. Информация о&nbsp;компании</a>
+            <a class="nav-link" href="{% url 'my_vacancies' %}">2. Вакансии</a>
+          </div>
+        </aside>
+      </div>
+      <div class="col-12 col-lg-8">
+        <div class="card">
+          <div class="card-body px-4 pb-4">
+            <!-- Tab -->
+            <section class="tab-pane fade show active">
+              <h2 class="h4 pt-2 pb-3">Информация о&nbsp;компании</h2>
+
+                {% if messages %}
+                {% for message in messages %}
+                 <div class="message {{ message.tags }}" style="color: red;" align="right">
+                  {{ message }}
+                 </div>
+                {% endfor %}
+                {% endif %}
+
+              <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark">{{ form.name.label }}</label>
+                      {{ form.name }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group">
+                      <label class="mb-2 text-dark">{{ form.logo.label }}</label>
+                      <div class="row align-items-center">
+                        <div class="col-6" style="position: relative;">
+                          <div class="custom-file" style="">
+                            {{ form.logo }}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark" >
+                        {{ form.employee_count.label }}</label>
+                      {{ form.employee_count }}
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="form-group pb-2">
+                      <label class="mb-2 text-dark">{{ form.location.label }}</label>
+                      {{ form.location }}
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group pb-2">
+                  <label class="mb-2 text-dark">{{ form.description.label }}</label>
+                  {{ form.description }}
+                </div>
+                  <div class="form-group">
+                      <input type="submit" class="btn btn-info" value="Сохранить">
+                  </div>
+              </form>
+            </section>
+            <!-- END Tab -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+{% endblock %}

@@ -11,8 +11,8 @@
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2 text-dark">{{ form.title.label }}</label>
-                      {{ form.title }}
+                      <label class="mb-2 text-dark">Название вакансии</label>
+                      <input class="form-control" type="text" value="{{ vacancy.title }}">
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
@@ -25,24 +25,24 @@
                 <div class="row">
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2 text-dark">{{ form.salary_min.label }}</label>
-                      {{ form.salary_min }}
+                      <label class="mb-2 text-dark">Зарплата от</label>
+                      <input class="form-control" type="text" value="{{ vacancy.salary_min }}">
                     </div>
                   </div>
                   <div class="col-12 col-md-6">
                     <div class="form-group pb-2">
-                      <label class="mb-2">{{ form.salary_max.label }}</label>
-                      {{ form.salary_max }}
+                      <label class="mb-2">Зарплата до</label>
+                      <input class="form-control" type="text" value="{{ vacancy.salary_max }}">
                     </div>
                   </div>
                 </div>
                 <div class="form-group pb-2">
-                  <label class="mb-2 text-dark">{{ form.skills.label }}</label>
-                  {{ form.skills }}
+                  <label class="mb-2 text-dark">Требуемые навыки</label>
+                  <textarea class="form-control" rows="3" style="color:#000;">{{ vacancy.skills }}</textarea>
                 </div>
                 <div class="form-group pb-2">
-                  <label class="mb-2 text-dark">{{ form.description.label }}</label>
-                  {{ form.description }}
+                  <label class="mb-2 text-dark">Описание вакансии</label>
+                  <textarea class="form-control" rows="13" style="color:#000;">{{ vacancy.description }}</textarea>
                 </div>
                 <div class="form-group pb-2">
                       <a href="{% url 'my_vacancy_edit' vacancy.id %}" class="btn btn-outline-info">Изменить</a>

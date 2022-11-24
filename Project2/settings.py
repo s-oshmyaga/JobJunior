@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_=3h-6n&y)k-929p9bybg=31@-0ev(38ik%e84aq5t1m107%^5'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'JunJob',
     # for number
     'phonenumber_field',
+    # Djagno Debug Toolbar
+    'debug_toolbar',
     # for delete
     'django_cleanup.apps.CleanupConfig',
 ]
@@ -54,6 +56,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+INTERNAL_IPS = [
+    '127.0.0.1',
 ]
 
 ROOT_URLCONF = 'Project2.urls'
@@ -125,14 +132,20 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = 'static'
 MEDIA_URL = 'media/'
 MEDIA_ROOT = 'media'
+
+STATIC_URL = 'static/'
+STATIC_ROOT = 'static'
+STATIC_DIRS = [
+    BASE_DIR / STATIC_ROOT,
+    BASE_DIR / MEDIA_ROOT,
+]
 
 
 MEDIA_COMPANY_IMAGE_DIR = 'company_images'
 MEDIA_SPECIALITY_IMAGE_DIR = 'speciality_images'
+MEDIA_AVATAR_IMAGE_DIR = 'avatars'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

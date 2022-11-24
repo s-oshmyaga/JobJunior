@@ -1,4 +1,4 @@
-<{% extends 'base.html' %}
+{% extends 'base.html' %}
 {% block container %}
 <main class="container mt-3 pb-5">
   <div class="navbar mt-1">
@@ -7,6 +7,9 @@
     <section class="col-12 col-lg-6 offset-lg-3 mt-5 card">
       <div class="card-body px-3 pb-4">
         <h1 class="h4 pt-2 pb-3">Мое резюме</h1>
+        {% if has_resume %}
+        <p class="alert alert-info" role="alert">У вас уже есть резюме</p>
+        {% else %}
         <p class="alert alert-info" role="alert">Создание резюме</p>
         {% if messages %}  <!-- сообщения об ошибках -->
                 {% for message in messages %}
@@ -75,7 +78,7 @@
             <input type="submit" class="btn btn-info" value="Создать">
           </div>
         </form>
-
+        {% endif %}
       </div>
     </section>
 </main>

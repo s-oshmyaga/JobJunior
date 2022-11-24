@@ -5,10 +5,9 @@
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
 from django.contrib import messages
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import DatabaseError
-from django.http import HttpResponseNotFound, HttpResponseServerError
-from django.shortcuts import redirect
+from django.db.models import Q
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView, FormView
 
@@ -28,7 +27,10 @@ class Main(ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(Main, self).get_context_data()
         # выводятся только первые 8 компаний
-        context['company_list'] = models.Company.objects.all()[:8]
+        if models.Company.objects.all()[:8].exists():
+            context['company_list'] = models.Company.objects.all()[:8]
+        else:  # если в базе данных меньше 8 компаний, пусть вернет все
+            context['company_list'] = models.Company.objects.all()
         return context
 
 
@@ -40,7 +42,10 @@ class Search(ListView):
 
     def get_queryset(self):
         query = self.request.GET.get('q')
-        search_result = func.request_to_bd(query)
+        if query:
+            search_result = func.request_to_bd(query)
+        else:  # если запрос отсутствует - вернуть пустой QuerySet
+            search_result = models.Vacancy.objects.none()
         return search_result
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -81,23 +86,29 @@ class VacancyView(FormView):
     success_url = reverse_lazy('sent')
 
     def get_context_data(self, **kwargs):
-        # если у пользователя есть резюме, can_answer выведет возможность откликнуться на вакансию
         context = super().get_context_data()
-        can_answer = False
-        try:
-            if self.request.user.resume:
-                can_answer = True
-        except ObjectDoesNotExist:  # если у пользователя нет резюме
-            can_answer = False
-        except AttributeError:  # если пользователь не авторизован
+        # если у пользователя есть резюме, can_answer выведет возможность откликнуться на вакансию
+        if models.Resume.objects.filter(user=self.request.user).exists():
+            can_answer = True
+        else:
             can_answer = False
         context['can_answer'] = can_answer
-        context['vacancy'] = models.Vacancy.objects.get(id=self.kwargs['vacancy_id'])
+
+        vacancy = models.Vacancy.objects.get(id=self.kwargs['vacancy_id'])
+        # если у пользователя уже есть отклик на эту вакансию, второй оставить нельзя
+        if models.Application.objects.filter(Q(vacancy=vacancy) & Q(user=self.request.user)).exists():
+            has_application = True
+        else:
+            has_application = False
+        context['has_application'] = has_application
+        context['vacancy'] = vacancy
         return context
 
     def form_valid(self, form):
         application_form = form.save(commit=False)
-        application_form.user = self.request.user
+        user = self.request.user
+        application_form.user = user
+        application_form.resume = user.resume
         application_form.vacancy = models.Vacancy.objects.get(id=self.kwargs['vacancy_id'])
         try:
             application_form.save()
@@ -136,8 +147,16 @@ class Register(CreateView):
 
 # хэндлеры
 def custom_handler404(request, exception):
-    return HttpResponseNotFound('Такой страницы не найдено')
+    return render(request, 'Errors/404.html')
 
 
 def custom_handler500(request):
-    return HttpResponseServerError('Ошибка со стороны сервера, приносим свои извинения')
+    return render(request, 'Errors/500.html')
+
+
+def custom_handler403(request, exception):
+    return render(request, 'Errors/403.html')
+
+
+def custom_handler400(request, exception):
+    return render(request, 'Errors/400.html')

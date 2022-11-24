@@ -4,9 +4,7 @@
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import ObjectDoesNotExist
-from django.db import IntegrityError, DatabaseError
-
+from django.db import DatabaseError
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -72,9 +70,6 @@ class ResumeCreate(FormView):  # создание резюме
         resume_form.user = self.request.user
         try:
             resume_form.save()
-        except IntegrityError:
-            messages.error(self.request, 'У вас уже есть резюме')
-            return self.render_to_response(self.get_context_data(form=form))
         except DatabaseError:
             messages.error(self.request, 'Ошибка создания резюме')
             return self.render_to_response(self.get_context_data(form=form))
@@ -83,6 +78,16 @@ class ResumeCreate(FormView):  # создание резюме
     def form_invalid(self, form):
         messages.error(self.request, 'Форма заполнена некорректно')
         return self.render_to_response(self.get_context_data(form=form))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        # Проверка наличия у пользователя резюме
+        # Если уже есть - выведется информация о его наличии
+        if models.Resume.objects.filter(user=self.request.user).exists():
+            context['has_resume'] = True
+        else:
+            context['has_resume'] = False
+        return context
 
 
 def resume_view(request):  # страница готового резюме

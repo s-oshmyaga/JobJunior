@@ -19,7 +19,7 @@
                   {{ application.written_cover_letter }}
                 </div>
                 <div class="form-group pb-2">
-                  <a href="{% url 'user_resume' application.user.id %}" class="btn btn-outline-info">Посмотреть резюме</a>
+                  <a href="{% url 'user_resume' application.resume.id %}" class="btn btn-outline-info">Посмотреть резюме</a>
                   <a href="{% url 'answer' application.id %}" class="btn btn-outline-info">Ответное сообщение</a>
                 </div>
               </form>

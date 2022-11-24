@@ -22,13 +22,13 @@ from django.views.generic import TemplateView
 
 from JunJob.Views import views, views_user, views_company, views_vacancies
 
-
-from JunJob.Views.views import custom_handler404
-from JunJob.Views.views import custom_handler500
+from JunJob.Views.views import custom_handler404, custom_handler400, custom_handler403, custom_handler500
 
 
 handler404 = custom_handler404
 handler500 = custom_handler500
+handler400 = custom_handler400
+handler403 = custom_handler403
 
 urlpatterns = [
     # Админка
@@ -76,7 +76,7 @@ urlpatterns = [
     path('mycompany/vacancies/application/<int:pk>', views_vacancies.Application.as_view(),
          name='application'),
     # резюме откликнувшегося
-    path('mycompany/vacancies/application/resume/<int:user_id>', views_vacancies.application_resume_view,
+    path('mycompany/vacancies/application/resume/<int:resume_id>', views_vacancies.application_resume_view,
          name='user_resume'),
     # написание ответа на отклик
     path('mycompany/vacancies/answer/<int:application_id>', views_company.AnswerView.as_view(), name='answer'),
@@ -114,3 +114,7 @@ if settings.DEBUG:
     ] + urlpatterns
     urlpatterns += static(settings.MEDIA_URL,
                           document_root=settings.MEDIA_ROOT)
+else:
+    urlpatterns += static(settings.STATIC_URL,
+                          document_root=settings.STATIC_ROOT
+                          )

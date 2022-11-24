@@ -23,7 +23,12 @@
           </div>
 
           {% if request.user.is_authenticated %}  <!-- Если пользователь авторизован - можно откликнуться -->
-            {% if can_answer %}
+            {% if can_answer %}  <!-- Если у пользователя есть резюме - можно откликнуться,
+            если нет - нужно создать -->
+              {% if has_application %}   <!-- Если пользователь уже откликнулся на эту вакансию - второй
+               раз откликнуться нельзя-->
+                <p class="h5 mt-3 font-weight-bold text-center">У вас уже есть отклик на эту вакансию</p>
+              {% else %}
               <form class="card mt-4 mb-3" enctype="multipart/form-data" method="POST">
                 {% csrf_token %}
                 <div class="card-body mx-3">
@@ -44,18 +49,19 @@
                   </div>
                 </div>
               </form>
+              {% endif %}  <!-- наличие отклика -->
             {% else %}
               <div class="card-body mx-3" style="background-color: #e6e6e6">
                 <p class="h5 mt-3 font-weight-bold text-center">Чтобы откликнуться нужно создать резюме</p>
                 <div class="mt-4 text-center"><a href="{% url 'resume_create' %}">Создать</a></div>
               </div>
-          {% endif %}
+          {% endif %}   <!-- наличие резюме -->
           {% else %}
           <div class="card-body mx-3" style="background-color: #e6e6e6">
             <p class="h5 mt-3 font-weight-bold text-center">Вы не авторизованны, поэтому не можете оставить отклик</p>
             <div class="mt-4 text-center"><a href="/register">Зарегистрируйтесь</a> или <a href="/login">войдите</a></div>
           </div>
-          {% endif %}
+          {% endif %}  <!-- авторизация пользователя -->
         </section>
       </div>
     </div>

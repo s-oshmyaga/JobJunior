@@ -9,8 +9,8 @@ from django.db.models import Q
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import ListView, FormView, DetailView, UpdateView
 from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, FormView, DetailView, UpdateView
 
 from JunJob import models
 from JunJob.accounts.forms import MyVacancyForm, ResumeForm
@@ -86,7 +86,7 @@ def my_vacancy_delete_view(request, vacancy_id):  # удаление вакан�
         return HttpResponseRedirect(reverse('my_vacancies'))
 
 
-class Application(DetailView):
+class Application(DetailView):  # отклик на вакансию
     model = models.Application
     template_name = 'about_company/about_vacancies/Application.html'
     context_object_name = 'application'
@@ -97,10 +97,9 @@ class Application(DetailView):
         return context
 
 
-def application_resume_view(request, user_id):  # просмотр резюме откликнувшегося
-    user = models.User.objects.get(id=user_id)
-    resume = models.Resume.objects.get(user=user)
+def application_resume_view(request, resume_id):  # просмотр резюме откликнувшегося
+    resume = models.Resume.objects.get(id=resume_id)
     form = ResumeForm(instance=resume)
-    resume_photo = user.profile.avatar
+    resume_photo = resume.user.profile.avatar
     return render(request, 'about_company/about_vacancies/Application-resume.html', {'form': form,
                                                                                      'avatar': resume_photo})

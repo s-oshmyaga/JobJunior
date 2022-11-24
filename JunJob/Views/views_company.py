@@ -5,9 +5,10 @@
 from datetime import date
 from django.contrib import messages
 from django.db import DatabaseError
+from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
-from django.views.generic import ListView, FormView, DetailView, UpdateView
 from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, FormView, DetailView, UpdateView
 
 from JunJob import models
 from JunJob.accounts.forms import MyCompanyForm, AnswerForm
@@ -74,13 +75,15 @@ class AnswerView(FormView):  # представление написания п�
     form_class = AnswerForm
 
     def form_valid(self, form):
-        application = models.Application.objects.get(id=self.kwargs['application_id'])
-        application.is_viewed = True
-        answer_form = form.save(commit=False)
-        answer_form.application = application
-        answer_form.date = date.today()
-        answer_form.save()
-        application.save()
+        with atomic():
+            application = models.Application.objects.get(id=self.kwargs['application_id'])
+            # ответ на отклик отправлен, больше оклик выводить не надо
+            application.is_viewed = True
+            answer_form = form.save(commit=False)
+            answer_form.application = application
+            answer_form.date = date.today()
+            answer_form.save()
+            application.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):

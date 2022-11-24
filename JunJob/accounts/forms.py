@@ -1,11 +1,10 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from phonenumber_field.formfields import PhoneNumberField
 
-from JunJob.models import Application, Vacancy, Company, Resume, Profile, Answer
 from JunJob.accounts.Choices import SPECIALTY_CHOICES, GRADE, STATUS
+from JunJob.models import Application, Vacancy, Company, Resume, Profile, Answer
 
 
 # формы аутентификации

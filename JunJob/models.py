@@ -37,15 +37,6 @@ class Vacancy(models.Model):
     published_at = models.DateField()
 
 
-class Application(models.Model):
-    written_username = models.CharField(max_length=70)
-    written_phone = PhoneNumberField(unique=True, null=False, blank=False)
-    written_cover_letter = models.TextField()
-    vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
-    is_viewed = models.BooleanField(blank=True, default=False)
-    user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE, null=True)
-
-
 class Resume(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='resume')
     name = models.CharField(max_length=60)
@@ -57,6 +48,16 @@ class Resume(models.Model):
     education = models.CharField(max_length=100)
     experience = models.TextField()
     portfolio = models.CharField(max_length=200)
+
+
+class Application(models.Model):
+    written_username = models.CharField(max_length=70)
+    written_phone = PhoneNumberField(unique=True, null=False, blank=False)
+    written_cover_letter = models.TextField()
+    vacancy = models.ForeignKey(Vacancy, related_name='applications', on_delete=models.CASCADE)
+    is_viewed = models.BooleanField(blank=True, default=False)
+    user = models.ForeignKey(User, related_name='applications', on_delete=models.CASCADE, null=True)
+    resume = models.ForeignKey(Resume, related_name='applications', on_delete=models.CASCADE, null=True)
 
 
 class Profile(models.Model):

@@ -64,6 +64,7 @@ class Profile(models.Model):
     def validate_image(fieldfile_obj):  # проверка размера аватара
         filesize = fieldfile_obj.file.size
         megabyte_limit = 5.0
+        # если размер больше 5 Мб, то бросить исключение
         if filesize > megabyte_limit * 1024 * 1024:
             raise ValidationError("Максимальный размер файла %sMB" % str(megabyte_limit))
 
@@ -75,6 +76,7 @@ class Profile(models.Model):
                                default='images/avatar.jpg')
 
 
+# При создании пользователя, сразу создавать профиль
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:

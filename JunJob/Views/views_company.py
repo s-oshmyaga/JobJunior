@@ -1,5 +1,7 @@
 """
-Представления компании пользователя, приглашения на собеседование
+Представления компании пользователя (список вакансии компании, создание и редактирование
+информации о компании),
+создания ответа на отклик.
 """
 
 from datetime import date
@@ -70,7 +72,7 @@ def delete_company_view(request):  # удаление компании
         return HttpResponseRedirect(reverse('my_company_edit'))
 
 
-class AnswerView(FormView):  # представление написания приглашения на собеседование
+class AnswerView(FormView):  # представление написания ответа на отклик
     template_name = 'about_company/about_vacancies/answer.html'
     form_class = AnswerForm
 

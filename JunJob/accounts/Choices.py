@@ -15,7 +15,7 @@ GRADE = (
 SPECIALTY_CHOICES = (
         ('Backend', 'Backend'),
         ('Frontend', 'Frontend'),
-        ('Stepik manager', 'Stepik manager'),
+        ('Project manager', 'Project manager'),
         ('DevOps', 'DevOps'),
         ('GameDev', 'GameDev'),
 )

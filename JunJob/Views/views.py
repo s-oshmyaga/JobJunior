@@ -1,6 +1,6 @@
 """
 Представления общих страниц пользователей (главной страницы, страницы поиска,
-списка вакансий и информации об одной вакансии с возможностью оставить отклик
+списка вакансий и информации об одной вакансии с возможностью оставить отклик), регистрации и авторизации.
 """
 from django.contrib.auth import login
 from django.contrib.auth.views import LoginView
@@ -49,6 +49,7 @@ class Search(ListView):
         return search_result
 
     def get_context_data(self, *, object_list=None, **kwargs):
+        # для вывода в строке поиска запроса
         context = super(Search, self).get_context_data()
         context['query'] = self.request.GET.get('q')
         return context

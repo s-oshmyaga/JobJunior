@@ -1,10 +1,13 @@
 """
-Представления страниц пользователя
+Представления страниц пользователя (профиль, его редактирование,
+создание и редактирование резюме, просмотр оставленных откликов,
+просмотр ответов на отклики.
 """
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import DatabaseError
+from django.db.transaction import atomic
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse, reverse_lazy
@@ -14,6 +17,8 @@ from JunJob import models
 from JunJob.accounts.forms import ResumeForm, ProfileForm, UserForm
 
 
+# в профиле и при его редактировании выводятся две формы для
+# работы с моделями User и Profile
 def profile_view(request):  # страница профиля
     form_user = UserForm(instance=request.user)
     form_profile = ProfileForm(instance=request.user.profile)
@@ -21,6 +26,7 @@ def profile_view(request):  # страница профиля
                                                      'form_user': form_user})
 
 
+@atomic
 def profile_edit(request):  # изменение профиля
     form_user = UserForm(instance=request.user)
     form_profile = ProfileForm(instance=request.user.profile)
@@ -48,6 +54,7 @@ def profile_edit(request):  # изменение профиля
                                                           'form_user': form_user})
 
 
+# при удалении аккаунта, автоматически выходить из системы с переходом на главную страницу
 @login_required
 def user_delete(request):
     if request.method == 'POST':
@@ -113,6 +120,7 @@ def resume_delete_view(request):  # удаление резюме
         return HttpResponseRedirect(reverse('resume'))
 
 
+# просмотр оставленных откликов
 class Applications(ListView):
     template_name = 'accounts/user_applications.html'
     context_object_name = 'application_list'
@@ -121,7 +129,7 @@ class Applications(ListView):
         return models.Application.objects.filter(user=self.request.user)
 
 
-def application_delete(requset, application_id):
+def application_delete(requset, application_id):  # удаление отклика
     application = models.Application.objects.get(id=application_id)
     application.delete()
     return HttpResponseRedirect(reverse_lazy('user_applications'))

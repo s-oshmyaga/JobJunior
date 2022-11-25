@@ -1,5 +1,7 @@
 """
-Представления вакансий компании пользователя, откликов на вакансии
+Представления вакансий компании пользователя (создание, редактирование, просмотр деталей вакансии
+и всего списка созданных вакансий, удаление вакансии),
+откликов на вакансии, просмотра резюме откликнувшегося.
 """
 
 
@@ -100,6 +102,7 @@ class Application(DetailView):  # отклик на вакансию
 def application_resume_view(request, resume_id):  # просмотр резюме откликнувшегося
     resume = models.Resume.objects.get(id=resume_id)
     form = ResumeForm(instance=resume)
+    # вывести в резюме фото откликнувшегося пользователя
     resume_photo = resume.user.profile.avatar
     return render(request, 'about_company/about_vacancies/Application-resume.html', {'form': form,
                                                                                      'avatar': resume_photo})

@@ -3,7 +3,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from phonenumber_field.formfields import PhoneNumberField
 
-from JunJob.accounts.Choices import SPECIALTY_CHOICES, GRADE, STATUS
+from JunJob.accounts.Choices import SPECIALTY_CHOICES, GRADE, STATUS  # для формы резюме
 from JunJob.models import Application, Vacancy, Company, Resume, Profile, Answer
 
 
@@ -17,6 +17,7 @@ class RegisterUserForm(UserCreationForm):
                                 widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
     def __init__(self, *args, **kwargs):
+        # пусть будет одна форма ввода пароля
         super(UserCreationForm, self).__init__(*args, **kwargs)
         self.fields.pop('password2')
 
@@ -45,17 +46,10 @@ class ApplicationForm(forms.ModelForm):   # отклик на вакансию
                                              'pattern': r'\+7[0-9]{10}'}))
     written_cover_letter = forms.CharField(label='Сопроводительное письмо',
                                            widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 8}))
-    user = forms.ModelChoiceField(queryset=User.objects.all(), empty_label=None)
-    vacancy = forms.ModelChoiceField(queryset=Vacancy.objects.all(), empty_label=None)
 
     class Meta:
         model = Application
         fields = ('written_username', 'written_phone', 'written_cover_letter')
-
-    def __init__(self, *args, **kwargs):
-        super(ApplicationForm, self).__init__(*args, **kwargs)
-        self.fields.pop('user')
-        self.fields.pop('vacancy')
 
 
 class MyCompanyForm(forms.ModelForm):   # форма редактирования информации о компании
@@ -116,7 +110,7 @@ class ResumeForm(forms.ModelForm):  # форма резюме
         fields = ('name', 'surname', 'status', 'salary', 'specialty', 'grade', 'education', 'experience', 'portfolio')
 
 
-class ProfileForm(forms.ModelForm):
+class ProfileForm(forms.ModelForm):  # форма профиля
 
     birthday = forms.DateField(required=False, label='Дата рождения',
                                widget=forms.TextInput(attrs={'class': 'form-control',
@@ -132,7 +126,7 @@ class ProfileForm(forms.ModelForm):
         fields = ('birthday', 'country', 'city', 'avatar')
 
 
-class UserForm(forms.ModelForm):
+class UserForm(forms.ModelForm):  # форма информации о пользователе, отражается в профиле
     email = forms.EmailField(required=False, label='email',
                              widget=forms.TextInput(attrs={'class': 'form-control'}))
     last_name = forms.CharField(required=False, label='Фамилия',
@@ -145,7 +139,7 @@ class UserForm(forms.ModelForm):
         fields = ('email', 'last_name', 'first_name')
 
 
-class AnswerForm(forms.ModelForm):
+class AnswerForm(forms.ModelForm):  # форма для ответа на отклик вакансии
     answer_text = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control',
                                                                'rows': 4,
                                                                'style': 'color:#000;'}))
